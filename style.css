@@ -1,4 +1,4 @@
-/* style.css - Mejoras en UX y Profesionalismo */
+/* style.css - Código Final y Consolidado */
 
 /* Paleta de Colores y Variables Base */
 :root {
@@ -127,7 +127,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ---------------------------------------------------
- * 5. GALERÍA HORIZONTAL (Cinta Fotográfica UX)
+ * 5. GALERÍA HORIZONTAL (Ajuste para 1/3 tarjetas)
  * --------------------------------------------------- */
 .horizontal-gallery {
     display: flex;
@@ -153,30 +153,40 @@ h1, h2, h3, h4, h5, h6 {
 .horizontal-gallery > .col {
     /* Usamos flex-shrink: 0 para que la tarjeta mantenga su ancho */
     flex-shrink: 0; 
-    margin-right: 20px; /* Espaciado entre tarjetas */
+    margin-right: 20px; /* Espaciado fijo entre tarjetas */
     scroll-snap-align: start; 
+    /* El padding lateral ayuda a que el primer y último curso no toquen el borde */
     padding-left: 1rem; 
     padding-right: 0;
 }
 
-/* Definir el ancho de las tarjetas según el dispositivo */
+/* ---------------------------------------------------
+ * BREAKPOINTS (Anchos específicos por dispositivo)
+ * --------------------------------------------------- */
 
-/* Móvil (muestra solo 1 tarjeta y deja espacio para la siguiente) */
+/* Móvil (MÁXIMO 1 curso visible, forzando el desplazamiento) */
+/* (max-width: 767px) */
 .horizontal-gallery > .col {
-    width: 80vw; /* 80% del ancho del viewport */
+    width: 85vw; /* 85% del ancho del viewport */
 }
 
-/* Tablet / Pantallas Medianas */
+/* Tablet / Pantallas Medianas (Transición a 2 cursos visibles) */
 @media (min-width: 768px) {
     .horizontal-gallery > .col {
-        width: 40vw; /* Muestra 2 tarjetas y media */
+        width: 45vw; /* Muestra 2 cursos y un indicio del tercero */
     }
 }
 
-/* Desktop / Pantallas Grandes */
+/* Desktop / Pantallas Grandes (MÁXIMO 3 cursos visibles) */
 @media (min-width: 992px) {
     .horizontal-gallery > .col {
-        width: 380px; /* Ancho fijo para mantener la uniformidad */
+        /* Permite que 3 tarjetas se vean cómodamente en la pantalla */
+        width: calc(33.33% - 20px); 
+    }
+    
+    /* Ajuste para la primera tarjeta en desktop */
+    .horizontal-gallery > .col:first-child {
+        padding-left: 0.75rem; /* Ajuste fino con el padding original de Bootstrap */
     }
 }
 
