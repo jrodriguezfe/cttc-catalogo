@@ -1,6 +1,6 @@
 // app.js
 
-let programas = [];
+//programas = [];
 
 // --- 1. LÓGICA DE CARGA DE DATOS (al inicio) ---
 
@@ -86,7 +86,7 @@ function crearCardPrograma(programa) {
                         <p class="mb-3 small">
                             <i class="bi bi-geo-alt me-1 text-acento"></i> Modalidad: <strong>${programa.modalidad}</strong>
                         </p>
-                        <button class="btn btn-sm btn-outline-dark w-100" onclick="mostrarDetalle(${programa.id})">
+                        <button class="btn btn-sm btn-outline-dark w-100" onclick="mostrarDetalle('${programa.id}')">
                             <i class="bi bi-info-circle me-1"></i> Ver Detalles
                         </button>
                     </div>
@@ -153,9 +153,12 @@ function filtrarProgramas() {
  * @param {number} id - El ID del programa.
  */
 function mostrarDetalle(id) {
+    console.log("Intentando mostrar detalle para ID:", id);
     const programa = programas.find(p => p.id === id);
 
-    if (!programa) return;
+    if (!programa){
+        console.error("Programa no encontrado con ID:", id);
+        return;}
 
     // Actualizar el contenido del Modal
     document.getElementById('detalleModalLabel').textContent = programa.titulo;
