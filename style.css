@@ -155,22 +155,21 @@ h1, h2, h3, h4, h5, h6 {
     flex-shrink: 0; 
     margin-right: 20px; /* Espaciado fijo entre tarjetas */
     scroll-snap-align: start; 
-    /* El padding lateral ayuda a que el primer y último curso no toquen el borde */
-    padding-left: 1rem; 
-    padding-right: 0;
+    padding-right: 0; /* No debe tener padding derecho */
+    padding-left: 1rem; /* Padding lateral */
 }
 
 /* ---------------------------------------------------
  * BREAKPOINTS (Anchos específicos por dispositivo)
  * --------------------------------------------------- */
 
-/* Móvil (MÁXIMO 1 curso visible, forzando el desplazamiento) */
+/* Móvil (MÁXIMO 1 curso visible: ~85vw) */
 /* (max-width: 767px) */
 .horizontal-gallery > .col {
-    width: 85vw; /* 85% del ancho del viewport */
+    width: 85vw; /* 85% del ancho del viewport, cumpliendo el requisito de 1 por vista */
 }
 
-/* Tablet / Pantallas Medianas (Transición a 2 cursos visibles) */
+/* Tablet / Pantallas Medianas (Transición a ~2 cursos visibles) */
 @media (min-width: 768px) {
     .horizontal-gallery > .col {
         width: 45vw; /* Muestra 2 cursos y un indicio del tercero */
@@ -180,8 +179,8 @@ h1, h2, h3, h4, h5, h6 {
 /* Desktop / Pantallas Grandes (MÁXIMO 3 cursos visibles) */
 @media (min-width: 992px) {
     .horizontal-gallery > .col {
-        /* Permite que 3 tarjetas se vean cómodamente en la pantalla */
-        width: calc(33.33% - 20px); 
+        /* Forzamos el ancho a ser 35vw. 3 tarjetas = 105vw, garantizando el scroll */
+        width: 35vw; 
     }
     
     /* Ajuste para la primera tarjeta en desktop */
