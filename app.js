@@ -2,7 +2,7 @@
 
 // ⚠️ Variables Globales
 let programas = []; 
-let userIsAdmin = false; // Nueva variable de estado de autenticación
+let userIsAdmin = false; // Estado de autenticación
 
 // ---------------------------------------------------
 // --- 1. LÓGICA DE CARGA Y AUTENTICACIÓN ---
@@ -17,11 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // Escuchar el estado de autenticación
+    // Escuchar el estado de autenticación (Firebase Auth)
     auth.onAuthStateChanged(user => {
         const authButton = document.getElementById('adminAuthButton');
         if (user) {
-            // Usuario ha iniciado sesión
+            // USUARIO AUTENTICADO
             userIsAdmin = true;
             authButton.textContent = 'Salir (Admin)';
             authButton.classList.remove('btn-dark');
@@ -30,11 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Si estaba en la vista de login, redirige al dashboard
             if (document.getElementById('login').classList.contains('active')) {
                 showSection('admin-dashboard');
-                // Recargar programas y renderizar el dashboard al entrar
-                cargarProgramas(); 
             }
         } else {
-            // Usuario ha cerrado sesión
+            // USUARIO NO AUTENTICADO
             userIsAdmin = false;
             authButton.textContent = 'Admin CTTC';
             authButton.classList.remove('btn-danger');
@@ -54,7 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 async function cargarProgramas() {
     const container = document.getElementById('programas-container');
-    container.innerHTML = `<div class="col-12 text-center p-5"><div class="spinner-border text-acento" role="status"></div><p>Cargando programas...</p></div>`;
+    const containerAdminList = document.getElementById('admin-list-container');
+    
+    // Muestra spinner en ambas áreas (catálogo público y lista admin)
+    const spinnerHtml = `<div class="col-12 text-center p-5"><div class="spinner-border text-acento" role="status"></div><p>Cargando programas...</p></div>`;
+    container.innerHTML = spinnerHtml;
+    if (containerAdminList) containerAdminList.innerHTML = spinnerHtml;
 
     try {
         const snapshot = await db.collection('programas').get();
@@ -67,7 +70,7 @@ async function cargarProgramas() {
         renderizarProgramas(programas);
         
         // Si el admin está logueado y en la vista de dashboard, actualiza la lista
-        if (userIsAdmin && document.getElementById('admin-dashboard').classList.contains('active')) {
+        if (userIsAdmin && containerAdminList && document.getElementById('admin-dashboard').classList.contains('active')) {
             renderAdminDashboard(programas);
         }
     } catch (error) {
@@ -78,6 +81,7 @@ async function cargarProgramas() {
                 <p>Verifique su conexión y las reglas de seguridad de Firestore.</p>
             </div>
         `;
+        if (containerAdminList) containerAdminList.innerHTML = `<p class="alert alert-danger">Error al cargar datos de administración.</p>`;
     }
 }
 
@@ -92,7 +96,8 @@ function handleAdminAuth() {
     if (userIsAdmin) {
         logoutAdmin();
     } else {
-        showSection('login');
+        // Al hacer clic, si no está logueado, va a la pantalla de login
+        showSection('login'); 
     }
 }
 
@@ -108,7 +113,7 @@ async function loginAdmin() {
 
     try {
         await auth.signInWithEmailAndPassword(email, password);
-        // La función onAuthStateChanged se encargará de actualizar la UI
+        // onAuthStateChanged se encargará de showSection('admin-dashboard')
     } catch (error) {
         console.error("Error de inicio de sesión:", error.message);
         authMessage.textContent = "Error: Credenciales inválidas o cuenta no registrada.";
@@ -122,7 +127,7 @@ async function loginAdmin() {
 function logoutAdmin() {
     auth.signOut()
         .then(() => {
-            // La función onAuthStateChanged se encargará de la redirección
+            // onAuthStateChanged se encargará de la redirección
         })
         .catch(error => {
             console.error("Error al cerrar sesión:", error.message);
@@ -145,11 +150,9 @@ function showSection(sectionId, clearForm = false) {
 
     // 2. Verificar permisos para secciones de administración
     if (['admin-dashboard', 'admin-form'].includes(sectionId) && !userIsAdmin) {
-        // Redirigir al login si no está autenticado
         document.getElementById('login').style.display = 'block';
         document.getElementById('login').classList.add('active');
-        alert("🔒 Acceso denegado: Por favor, inicie sesión como administrador.");
-        return;
+        return; // Detiene la ejecución, evita mostrar secciones protegidas
     }
 
     // 3. Mostrar la sección destino
@@ -163,13 +166,14 @@ function showSection(sectionId, clearForm = false) {
             filtrarProgramas();
         }
         if (sectionId === 'admin-dashboard') {
-            cargarProgramas(); // Asegura que la lista esté fresca
+            cargarProgramas(); // Recarga y renderiza el dashboard
         }
         if (sectionId === 'admin-form' && clearForm) {
             // Modo "Crear Nuevo Programa"
             document.getElementById('adminForm').reset();
             document.getElementById('adminForm').removeAttribute('data-programa-id');
             document.getElementById('adminFormTitle').innerHTML = 'Crear Nuevo Programa <span class="text-acento"></span>';
+            document.querySelector('#adminForm button').textContent = "Guardar Programa"; // Restaura texto del botón
         }
     }
 }
@@ -183,6 +187,8 @@ function showSection(sectionId, clearForm = false) {
  */
 function renderAdminDashboard(listaProgramas) {
     const container = document.getElementById('admin-list-container');
+    if (!container) return; 
+
     if (listaProgramas.length === 0) {
         container.innerHTML = '<p class="text-center p-3">No hay programas registrados.</p>';
         return;
@@ -229,10 +235,8 @@ function renderAdminDashboard(listaProgramas) {
 
 
 // ---------------------------------------------------
-// --- 5. FUNCIONES DE CATÁLOGO (Mantienen su lógica) ---
+// --- 5. FUNCIONES DE CATÁLOGO PÚBLICO ---
 // ---------------------------------------------------
-
-// ... (crearCardPrograma, renderizarProgramas, filtrarProgramas, mostrarDetalle se mantienen igual) ...
 
 /**
  * Genera la tarjeta HTML para un programa específico.
@@ -285,7 +289,7 @@ function renderizarProgramas(listaProgramas) {
 }
 
 /**
- * Filtra los programas basándose en la barra de búsqueda y el selector de categoría.
+ * Filtra los programas.
  */
 function filtrarProgramas() {
     const textoBusqueda = document.getElementById('buscador').value.toLowerCase();
@@ -312,7 +316,7 @@ function mostrarDetalle(id) {
     const programa = programas.find(p => p.id === id);
     if (!programa) return;
 
-    // --- 1. INYECCIÓN DEL CONTENIDO PRINCIPAL (Igual que antes) ---
+    // --- 1. INYECCIÓN DEL CONTENIDO PRINCIPAL ---
     document.getElementById('detalleModalLabel').textContent = programa.titulo;
     const contenidoModal = document.getElementById('detalle-contenido');
     
@@ -340,14 +344,14 @@ function mostrarDetalle(id) {
         </ul>
     `;
     
-    // --- 2. INYECCIÓN DEL FOOTER Y BOTONES ---
+    // --- 2. INYECCIÓN DEL FOOTER Y BOTONES (CRUD) ---
     let footerContent = `
         <a href="https://wa.me/51999999999" class="btn btn-lg btn-acento" target="_blank">
             <i class="bi bi-whatsapp me-1"></i> Solicitar Inscripción
         </a>
     `;
 
-    // 🚨 Solo inyectar botones de CRUD si el usuario es Admin
+    // Solo inyectar botones de CRUD si el usuario es Admin
     if (userIsAdmin) {
         footerContent += `
             <button class="btn btn-outline-secondary me-2" onclick="cargarFormularioEdicion('${programa.id}')">
@@ -370,7 +374,7 @@ function mostrarDetalle(id) {
 }
 
 // ---------------------------------------------------
-// --- 6. FUNCIONES DE ADMINISTRACIÓN (CRUD) ---
+// --- 7. FUNCIONES CRUD DE ADMINISTRACIÓN ---
 // ---------------------------------------------------
 
 /**
@@ -437,7 +441,6 @@ function cargarFormularioEdicion(id) {
     document.getElementById('adminImagenUrl').value = programa.imagenUrl;
     document.getElementById('adminDescripcion').value = programa.descripcionCorta;
     
-    // El contenido ahora se separa por saltos de línea para facilitar la edición
     const contenidoTexto = programa.contenido && Array.isArray(programa.contenido) ? programa.contenido.join('\n') : '';
     document.getElementById('adminContenido').value = contenidoTexto;
 
@@ -475,10 +478,12 @@ async function guardarCambiosEdicion() {
         contenido: contenidoLimpio,
         tags: document.getElementById('adminTitulo').value.toLowerCase().split(' '),
         
-        // Campos por defecto (puedes añadir inputs para editarlos si lo deseas)
+        // Campos por defecto (solo se incluyen en el ADD, no se tocan en el UPDATE)
         descripcionDetallada: "Descripción detallada del programa. Edite esto para más información.",
         duracion: "A Definir",
         modalidad: "A Definir",
+        perfilEgresado: "Egresado listo para el mercado laboral.",
+        requisitos: "Sin requisitos.",
     };
     
     if (!datosGuardar.titulo) {
@@ -488,11 +493,11 @@ async function guardarCambiosEdicion() {
 
     try {
         if (id) {
-            // Modo EDICIÓN (UPDATE)
+            // Modo EDICIÓN (UPDATE): Solo enviamos los campos que queremos actualizar
             await db.collection('programas').doc(id).update(datosGuardar);
             alert(`✅ Edición Exitosa: Programa "${datosGuardar.titulo}" actualizado.`);
         } else {
-            // Modo CREACIÓN (ADD)
+            // Modo CREACIÓN (ADD): Enviamos todos los datos (incluyendo los por defecto)
             await db.collection('programas').add(datosGuardar);
             alert(`✅ ¡Carga Exitosa! Programa "${datosGuardar.titulo}" creado en Firebase.`);
         }
@@ -503,7 +508,7 @@ async function guardarCambiosEdicion() {
         cargarProgramas(); 
         showSection('admin-dashboard');
         
-        // Restaurar el botón/título para futuras creaciones
+        // Restaurar el botón/título para el siguiente ADD
         document.getElementById('adminFormTitle').innerHTML = 'Gestión de Programa <span class="text-acento"></span>';
         document.querySelector('#adminForm button').textContent = "Guardar Programa";
         
@@ -512,6 +517,3 @@ async function guardarCambiosEdicion() {
         alert(`Error al guardar: ${error.message}. Revise sus reglas de seguridad en Firebase.`);
     }
 }
-
-// Nota: Las funciones de CRUD ahora están protegidas por la variable 'userIsAdmin'.
-// Además, Firebase bloqueará las operaciones de escritura si las reglas no lo permiten.
