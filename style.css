@@ -104,16 +104,16 @@ h1, h2, h3, h4, h5, h6 {
  * --------------------------------------------------- */
 .whatsapp-float {
     position: fixed;
-    width: 55px; /* Ligeramente más pequeño */
+    width: 55px; 
     height: 55px;
     bottom: 30px;
     right: 30px;
     background-color: #25d366;
     color: #FFF;
-    border-radius: 50%; /* Asegura círculo */
+    border-radius: 50%; 
     text-align: center;
     font-size: 28px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Sombra más moderna */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
     z-index: 1000;
     display: flex;
     justify-content: center;
@@ -123,12 +123,66 @@ h1, h2, h3, h4, h5, h6 {
 
 .whatsapp-float:hover {
     background-color: #128c7e;
-    transform: scale(1.1); /* Efecto de crecimiento sutil */
+    transform: scale(1.1); 
 }
 
 /* ---------------------------------------------------
- * 5. SECCIÓN DE ADMIN (Clarity)
+ * 5. GALERÍA HORIZONTAL (Cinta Fotográfica UX)
+ * --------------------------------------------------- */
+.horizontal-gallery {
+    display: flex;
+    flex-wrap: nowrap; /* Impide que los elementos se envuelvan */
+    overflow-x: auto;  /* Permite el desplazamiento horizontal */
+    padding: 1rem 0;
+    margin-left: 0; 
+    margin-right: 0;
+    -webkit-overflow-scrolling: touch; /* Suaviza el scroll en iOS */
+    scroll-snap-type: x mandatory; /* Ayuda a que el scroll se detenga en cada tarjeta */
+}
+
+/* Ocultar barra de desplazamiento para un look más limpio */
+.horizontal-gallery::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+.horizontal-gallery {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Estilo y espaciado de las tarjetas dentro de la galería */
+.horizontal-gallery > .col {
+    /* Usamos flex-shrink: 0 para que la tarjeta mantenga su ancho */
+    flex-shrink: 0; 
+    margin-right: 20px; /* Espaciado entre tarjetas */
+    scroll-snap-align: start; 
+    padding-left: 1rem; 
+    padding-right: 0;
+}
+
+/* Definir el ancho de las tarjetas según el dispositivo */
+
+/* Móvil (muestra solo 1 tarjeta y deja espacio para la siguiente) */
+.horizontal-gallery > .col {
+    width: 80vw; /* 80% del ancho del viewport */
+}
+
+/* Tablet / Pantallas Medianas */
+@media (min-width: 768px) {
+    .horizontal-gallery > .col {
+        width: 40vw; /* Muestra 2 tarjetas y media */
+    }
+}
+
+/* Desktop / Pantallas Grandes */
+@media (min-width: 992px) {
+    .horizontal-gallery > .col {
+        width: 380px; /* Ancho fijo para mantener la uniformidad */
+    }
+}
+
+/* ---------------------------------------------------
+ * 6. UTILITY
  * --------------------------------------------------- */
 .spa-section {
-    min-height: 70vh; /* Asegura que la sección no se colapse al cambiar */
+    min-height: 70vh; 
 }

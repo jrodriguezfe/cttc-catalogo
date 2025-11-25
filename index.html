@@ -14,8 +14,8 @@
     <header class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="#" onclick="showSection('catalogo')">
-                <img src="images/logo-cttc.jpg" alt="Logo CTTC-SENATI" style="height: 40px; margin-right: 10px;">
-                
+                <img src="images/logo-cttc.png" alt="Logo CTTC-SENATI" style="height: 40px; margin-right: 10px;">
+                <span class="fs-6">Catálogo Dinámico</span>
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +59,9 @@
 
             <hr>
 
-            <div id="programas-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <div class="row">
+                <div id="programas-container" class="horizontal-gallery">
+                    </div>
             </div>
         </section>
 
@@ -248,7 +250,7 @@
 
     <script>
         const firebaseConfig = {
-            // ⚠️ ASEGÚRATE DE USAR TUS CREDENCIALES REALES AQUÍ
+            // ⚠️ TUS CREDENCIALES REALES AQUÍ
             apiKey: "AIzaSyCgMZOmU7FCZTRA44rBKeT8f6B_jYAf4_A", 
             authDomain: "cttc-senati-catalogo.firebaseapp.com",
             projectId: "cttc-senati-catalogo",
