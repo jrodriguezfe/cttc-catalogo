@@ -19,24 +19,49 @@ document.addEventListener('DOMContentLoaded', () => {
  * Carga los datos de programas.json y renderiza el catálogo inicial.
  */
 async function cargarProgramas() {
+    // app.js
+
+    // Nota: db ya está inicializado en la sección <script> de index.html
+
+    let programas = []; // Mantenemos la variable global para el filtrado
+
+    document.addEventListener('DOMContentLoaded', () => {
+    // La inicialización de Firebase ya ocurre en index.html
+    cargarProgramas();
+    // ... (Inicializa Tooltips)
+})};
+
+
+/**
+ * Carga los programas directamente desde Firestore.
+ */
+async function cargarProgramas() {
+    const container = document.getElementById('programas-container');
+    container.innerHTML = `<div class="col-12 text-center p-5"><div class="spinner-border text-acento" role="status"></div><p>Cargando programas...</p></div>`;
+
     try {
-        const response = await fetch('programas.json');
-        if (!response.ok) {
-            throw new Error('Error al cargar programas.json');
-        }
-        programas = await response.json();
+        // Obtenemos todos los documentos de la colección 'programas'
+        const snapshot = await db.collection('programas').get();
+        
+        programas = snapshot.docs.map(doc => ({
+            id: doc.id, // Usamos el ID de Firestore como ID único
+            ...doc.data()
+        }));
+
         renderizarProgramas(programas);
     } catch (error) {
-        console.error("No se pudo cargar el catálogo:", error);
-        // Mostrar un mensaje de error amigable en la interfaz
-        document.getElementById('programas-container').innerHTML = `
+        console.error("Error al cargar programas desde Firebase:", error);
+        container.innerHTML = `
             <div class="col-12 alert alert-danger" role="alert">
-                <h4 class="alert-heading">Error de Carga</h4>
-                <p>No se pudieron cargar los programas de capacitación. Por favor, asegúrese de que el archivo <strong>programas.json</strong> exista.</p>
+                <h4 class="alert-heading">Error de Conexión a Base de Datos</h4>
+                <p>No se pudieron cargar los programas. Verifique su conexión a internet y las credenciales de Firebase.</p>
             </div>
         `;
     }
 }
+
+    // *** El resto de funciones (crearCardPrograma, renderizarProgramas, filtrarProgramas, mostrarDetalle) permanece IGUAL,
+    //     ya que trabajan con la variable global 'programas' que acabamos de llenar. ***
 
 // --- 2. LÓGICA DE RENDERIZADO DEL CATÁLOGO ---
 
@@ -199,25 +224,53 @@ function showSection(sectionId) {
 /**
  * Simula el proceso de guardar un nuevo programa desde la interfaz de administración.
  */
-function simularCargaAdmin() {
+async function simularCargaAdmin() {
     const titulo = document.getElementById('adminTitulo').value;
+    const categoria = document.getElementById('adminCategoria').value;
     const estado = document.getElementById('adminEstado').value;
+    const descripcion = document.getElementById('adminDescripcion').value;
+    const imagenUrl = document.getElementById('adminImagenUrl').value;
+    const contenidoTexto = document.getElementById('adminContenido').value;
 
     if (!titulo || estado === 'Inactivo') {
         alert('Simulación FALLIDA:\nEl programa debe tener un Título y estar Activo para la carga.');
         return;
     }
 
-    alert(`
-        ✅ ¡Carga Exitosa (Simulada)!
+    try {
+        // Crear el objeto del nuevo programa
+        const nuevoPrograma = {
+            titulo,
+            categoria,
+            estado,
+            descripcionCorta: descripcion,
+            descripcionDetallada: "Descripción detallada por defecto...", // Puedes expandir esto
+            imagenUrl: imagenUrl || "https://picsum.photos/400/250?random=10",
+            duracion: "A definir",
+            modalidad: "A definir",
+            tags: titulo.toLowerCase().split(' '),
+            contenido: contenidoTexto.split(/[\n,-]/).map(s => s.trim()).filter(s => s.length > 0), // Convierte texto plano a array
+            perfilEgresado: "Egresado listo para el mercado laboral.",
+            requisitos: "Sin requisitos."
+        };
+
+        // Guardar el nuevo programa en la colección 'programas'
+        await db.collection('programas').add(nuevoPrograma);
+
+        alert(`
+            ✅ ¡Carga Exitosa! (Guardado en Firebase)
+            
+            Programa: "${titulo}"
+            Estado: ${estado}
+        `);
+
+        // Recargar el catálogo después de añadir el nuevo programa
+        document.getElementById('adminForm').reset();
+        cargarProgramas(); // Refresca el listado para ver el nuevo item
+        showSection('catalogo'); // Vuelve al catálogo
         
-        Programa: "${titulo}"
-        Categoría: ${document.getElementById('adminCategoria').value}
-        Estado: ${estado}
-
-        Nota: En un entorno real, estos datos se enviarían a un backend (API, Base de Datos, CMS) para su persistencia.
-    `);
-
-    // Limpiar el formulario después de la simulación
-    document.getElementById('adminForm').reset();
+    } catch (error) {
+        console.error("Error al guardar programa en Firebase:", error);
+        alert(`❌ Error al guardar: ${error.message}`);
+    }
 }

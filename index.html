@@ -173,4 +173,35 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script src="app.js"></script>
 </body>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+<script>
+    // ⚠️ REEMPLAZA ESTE OBJETO con las credenciales que obtuviste en el Paso 1.3
+    const firebaseConfig = {
+        apiKey: "AIzaSyCgMZOmU7FCZTRA44rBKeT8f6B_jYAf4_A",
+        authDomain: "cttc-senati-catalogo.firebaseapp.com",
+        projectId: "cttc-senati-catalogo",
+        storageBucket: "cttc-senati-catalogo.firebasestorage.app",
+        messagingSenderId: "385604859292",
+        appId: "1:385604859292:web:aca4b0ca7e77561cdec459"
+    };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Obtener una referencia a Firestore
+    const db = firebase.firestore();
+</script>
+
+<script src="app.js"></script>
+</body>
+</html>
+
+
+
 </html>
