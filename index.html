@@ -29,8 +29,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="showSection('contacto')">Contacto</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-acento" href="#" onclick="showSection('admin')">Admin (Gestión)</a>
+                    <li class="nav-item ms-lg-3">
+                        <button id="adminAuthButton" class="btn btn-dark" onclick="handleAdminAuth()">
+                            <i class="bi bi-person-circle me-1"></i> Admin CTTC
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -110,13 +112,53 @@
                 </div>
             </div>
         </section>
+        
+        <section id="login" class="spa-section" style="display:none;">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <h2 class="mb-4 display-5 text-center">Acceso <span class="text-acento">Administrador</span></h2>
+                    <div class="card p-4 shadow">
+                        <div id="authMessage" class="alert alert-danger" style="display:none;"></div>
+                        <form id="loginForm" onsubmit="event.preventDefault(); loginAdmin()">
+                            <div class="mb-3">
+                                <label for="loginEmail" class="form-label">Correo Electrónico</label>
+                                <input type="email" class="form-control" id="loginEmail" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="loginPassword" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="loginPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-dark w-100">Iniciar Sesión</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <section id="admin" class="spa-section" style="display:none;">
-            <h2 class="mb-4 display-5">Admin <span class="text-acento">(Gestión de Programas)</span></h2>
+        <section id="admin-dashboard" class="spa-section" style="display:none;">
+            <h2 class="mb-4 display-5">Panel de <span class="text-acento">Administración CTTC</span></h2>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <p class="lead">Gestione todos los programas publicados.</p>
+                <button class="btn btn-acento" onclick="showSection('admin-form', true)">
+                    <i class="bi bi-plus-circle me-1"></i> Crear Nuevo Programa
+                </button>
+            </div>
+
+            <div class="card p-4 shadow-sm">
+                <h4 class="mb-3">Programas Registrados</h4>
+                <div id="admin-list-container" class="table-responsive">
+                    </div>
+            </div>
+        </section>
+
+        <section id="admin-form" class="spa-section" style="display:none;">
+            <a href="#" onclick="showSection('admin-dashboard')" class="text-decoration-none d-block mb-3">
+                <i class="bi bi-arrow-left"></i> Volver al Dashboard
+            </a>
+            <h2 class="mb-4 display-5" id="adminFormTitle">Gestión de Programa <span class="text-acento"></span></h2>
             <p class="lead">Usa esta interfaz para crear nuevos programas o cargar uno existente para su edición.</p>
             
             <div class="card p-4 shadow-sm">
-                <h4 class="mb-4">Gestión de Programa</h4>
                 <form id="adminForm">
                     <div class="mb-3">
                         <label for="adminTitulo" class="form-label">Título del Programa</label>
@@ -148,13 +190,13 @@
                         <textarea class="form-control" id="adminDescripcion" rows="2" required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="adminContenido" class="form-label">Contenido/Temario (Separar por guiones o comas)</label>
+                        <label for="adminContenido" class="form-label">Contenido/Temario (Separar por nuevas líneas)</label>
                         <textarea class="form-control" id="adminContenido" rows="4" required></textarea>
                     </div>
 
                     <button type="button" class="btn btn-acento w-100 mt-3" onclick="guardarCambiosEdicion()">Guardar Programa</button>
                     <small class="form-text text-muted mt-2">
-                        UX: La función de este botón se alterna entre 'Crear Nuevo' y 'Guardar Cambios'.
+                        El mismo botón se usa para crear o actualizar según el modo de edición.
                     </small>
                 </form>
             </div>
@@ -171,11 +213,11 @@
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
     <script>
-        // ⚠️ TUS CREDENCIALES DE FIREBASE (Son públicas y seguras con las reglas adecuadas)
         const firebaseConfig = {
-            apiKey: "AIzaSyCgMZOmU7FCZTRA44rBKeT8f6B_jYAf4_A",
+            apiKey: "AIzaSyCgMZOmU7FCZTRA44rBKeT8f6B_jYAf4_A", // Usa tu propia API Key
             authDomain: "cttc-senati-catalogo.firebaseapp.com",
             projectId: "cttc-senati-catalogo",
             storageBucket: "cttc-senati-catalogo.firebasestorage.app",
@@ -185,6 +227,7 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth(); // Inicializar Firebase Auth
     </script>
 
     <script src="app.js"></script>
