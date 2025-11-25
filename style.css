@@ -1,0 +1,91 @@
+/* style.css */
+
+/* Paleta de Colores */
+:root {
+    --color-principal: #000000; /* Negro */
+    --color-acento: #A3E062; /* Verde Lima/Claro */
+    --color-fondo: #f8f9fa; /* Gris Claro para el fondo de la página */
+    --color-texto-secundario: #6c757d;
+}
+
+body {
+    background-color: var(--color-fondo);
+    color: var(--color-principal);
+    font-family: 'Inter', sans-serif; /* Asumiendo una fuente moderna */
+}
+
+/* Encabezados y Títulos */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-principal);
+    font-weight: 700;
+}
+
+.text-acento {
+    color: var(--color-acento) !important;
+}
+
+.bg-acento {
+    background-color: var(--color-acento) !important;
+    color: var(--color-principal) !important; /* Texto negro sobre el acento */
+}
+
+/* Botones de Acento */
+.btn-acento {
+    background-color: var(--color-acento);
+    border-color: var(--color-acento);
+    color: var(--color-principal) !important;
+    font-weight: 600;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.btn-acento:hover {
+    background-color: #7BB244; /* Tono más oscuro al pasar el mouse */
+    border-color: #7BB244;
+    color: var(--color-principal) !important;
+}
+
+/* Tarjetas de Programa (Cards) */
+.card-programa {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #dee2e6;
+    background-color: #ffffff;
+}
+
+.card-programa:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+.card-img-top {
+    height: 180px;
+    object-fit: cover;
+}
+
+/* Botón Flotante de WhatsApp */
+.whatsapp-float {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 40px;
+    right: 40px;
+    background-color: #25d366;
+    color: #FFF;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 30px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.whatsapp-float:hover {
+    background-color: #128c7e;
+}
+
+/* Formulario de Contacto y Admin */
+.form-control:focus {
+    border-color: var(--color-acento);
+    box-shadow: 0 0 0 0.25rem rgba(163, 224, 98, 0.25); /* Sombra suave con el color acento */
+}
