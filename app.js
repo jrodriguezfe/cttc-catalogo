@@ -2,16 +2,16 @@
 
 // ⚠️ Variables Globales
 let programas = []; 
-let userIsAdmin = false; // Estado de autenticación
+let userIsAdmin = false; // Estado de autenticación del administrador
 
 // ---------------------------------------------------
-// --- 1. LÓGICA DE CARGA Y AUTENTICACIÓN ---
+// --- 1. INICIALIZACIÓN Y CARGA DE DATOS ---
 // ---------------------------------------------------
 
 document.addEventListener('DOMContentLoaded', () => {
     cargarProgramas();
 
-    // Inicializa Tooltips de Bootstrap
+    // Inicializa Tooltips de Bootstrap (para el botón de WhatsApp)
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
@@ -60,6 +60,7 @@ async function cargarProgramas() {
     if (containerAdminList) containerAdminList.innerHTML = spinnerHtml;
 
     try {
+        // Se asume que 'db' está inicializado globalmente en index.html
         const snapshot = await db.collection('programas').get();
         
         programas = snapshot.docs.map(doc => ({
@@ -81,7 +82,7 @@ async function cargarProgramas() {
                 <p>Verifique su conexión y las reglas de seguridad de Firestore.</p>
             </div>
         `;
-        if (containerAdminList) containerAdminList.innerHTML = `<p class="alert alert-danger">Error al cargar datos de administración.</p>`;
+        if (containerAdminList) containerAdminList.innerHTML = `<p class="alert alert-danger">Error al cargar datos de administración. Revise la consola del navegador.</p>`;
     }
 }
 
@@ -96,7 +97,6 @@ function handleAdminAuth() {
     if (userIsAdmin) {
         logoutAdmin();
     } else {
-        // Al hacer clic, si no está logueado, va a la pantalla de login
         showSection('login'); 
     }
 }
@@ -112,8 +112,8 @@ async function loginAdmin() {
     authMessage.style.display = 'none';
 
     try {
+        // Se asume que 'auth' está inicializado globalmente en index.html
         await auth.signInWithEmailAndPassword(email, password);
-        // onAuthStateChanged se encargará de showSection('admin-dashboard')
     } catch (error) {
         console.error("Error de inicio de sesión:", error.message);
         authMessage.textContent = "Error: Credenciales inválidas o cuenta no registrada.";
@@ -126,9 +126,7 @@ async function loginAdmin() {
  */
 function logoutAdmin() {
     auth.signOut()
-        .then(() => {
-            // onAuthStateChanged se encargará de la redirección
-        })
+        .then(() => {})
         .catch(error => {
             console.error("Error al cerrar sesión:", error.message);
         });
@@ -152,7 +150,8 @@ function showSection(sectionId, clearForm = false) {
     if (['admin-dashboard', 'admin-form'].includes(sectionId) && !userIsAdmin) {
         document.getElementById('login').style.display = 'block';
         document.getElementById('login').classList.add('active');
-        return; // Detiene la ejecución, evita mostrar secciones protegidas
+        alert("🔒 Acceso denegado: Por favor, inicie sesión como administrador.");
+        return; 
     }
 
     // 3. Mostrar la sección destino
@@ -173,7 +172,7 @@ function showSection(sectionId, clearForm = false) {
             document.getElementById('adminForm').reset();
             document.getElementById('adminForm').removeAttribute('data-programa-id');
             document.getElementById('adminFormTitle').innerHTML = 'Crear Nuevo Programa <span class="text-acento"></span>';
-            document.querySelector('#adminForm button').textContent = "Guardar Programa"; // Restaura texto del botón
+            document.querySelector('#adminForm button').textContent = "Guardar Programa"; 
         }
     }
 }
@@ -320,6 +319,7 @@ function mostrarDetalle(id) {
     document.getElementById('detalleModalLabel').textContent = programa.titulo;
     const contenidoModal = document.getElementById('detalle-contenido');
     
+    // Procesa el contenido para la lista del modal
     const contenidoArray = programa.contenido && Array.isArray(programa.contenido) ? programa.contenido : (programa.contenido ? programa.contenido.split('\n') : []);
     const temarioList = contenidoArray.map(item => `<li class="list-group-item"><i class="bi bi-check-circle-fill text-acento me-2"></i>${item.trim()}</li>`).join('');
 
@@ -342,6 +342,12 @@ function mostrarDetalle(id) {
         <ul class="list-group list-group-flush mb-4">
             ${temarioList.length > 0 ? temarioList : '<li class="list-group-item">Contenido no especificado.</li>'}
         </ul>
+        
+        <h4 class="text-acento">Perfil del Egresado</h4>
+        <p>${programa.perfilEgresado || 'N/A'}</p>
+
+        <h4 class="text-acento">Requisitos</h4>
+        <p>${programa.requisitos || 'N/A'}</p>
     `;
     
     // --- 2. INYECCIÓN DEL FOOTER Y BOTONES (CRUD) ---
@@ -434,15 +440,29 @@ function cargarFormularioEdicion(id) {
     document.getElementById('adminFormTitle').innerHTML = `Editar Programa <span class="text-acento">${programa.titulo}</span>`;
     document.getElementById('adminForm').setAttribute('data-programa-id', id);
 
-    // 2. Llenar los campos del formulario
-    document.getElementById('adminTitulo').value = programa.titulo;
-    document.getElementById('adminCategoria').value = programa.categoria;
+    // 2. Llenar todos los campos del formulario
+    document.getElementById('adminTitulo').value = programa.titulo || '';
+    document.getElementById('adminCategoria').value = programa.categoria || 'Diseño';
     document.getElementById('adminEstado').value = programa.estado || 'Activo';
-    document.getElementById('adminImagenUrl').value = programa.imagenUrl;
-    document.getElementById('adminDescripcion').value = programa.descripcionCorta;
+    document.getElementById('adminImagenUrl').value = programa.imagenUrl || '';
     
+    document.getElementById('adminDescripcion').value = programa.descripcionCorta || '';
+    document.getElementById('adminDescripcionDetallada').value = programa.descripcionDetallada || '';
+    
+    // Contenido (Temario)
     const contenidoTexto = programa.contenido && Array.isArray(programa.contenido) ? programa.contenido.join('\n') : '';
     document.getElementById('adminContenido').value = contenidoTexto;
+
+    // Especificaciones
+    document.getElementById('adminDuracion').value = programa.duracion || '';
+    document.getElementById('adminModalidad').value = programa.modalidad || '';
+    document.getElementById('adminPerfilEgresado').value = programa.perfilEgresado || '';
+    document.getElementById('adminRequisitos').value = programa.requisitos || '';
+
+    // Tags
+    const tagsTexto = programa.tags && Array.isArray(programa.tags) ? programa.tags.join(', ') : '';
+    document.getElementById('adminTags').value = tagsTexto;
+
 
     // 3. Configurar el botón de acción
     document.querySelector('#adminForm button').textContent = "Guardar Cambios";
@@ -466,24 +486,39 @@ async function guardarCambiosEdicion() {
         .map(s => s.trim())
         .filter(s => s.length > 0);
 
+    // Procesar tags
+    const tagsManuales = document.getElementById('adminTags').value
+        .toLowerCase()
+        .split(/[,\s]+/) 
+        .filter(s => s.length > 0);
+        
+    const tagsGenerados = document.getElementById('adminTitulo').value
+        .toLowerCase()
+        .split(' ');
+
+    const tagsFinales = Array.from(new Set([...tagsManuales, ...tagsGenerados]));
+
     // Recoger datos del formulario
     const datosGuardar = {
+        // Datos Básicos
         titulo: document.getElementById('adminTitulo').value,
         categoria: document.getElementById('adminCategoria').value,
         estado: document.getElementById('adminEstado').value,
-        descripcionCorta: document.getElementById('adminDescripcion').value,
         imagenUrl: document.getElementById('adminImagenUrl').value,
-        
-        // Datos procesados
+
+        // Descripción y Contenido
+        descripcionCorta: document.getElementById('adminDescripcion').value,
+        descripcionDetallada: document.getElementById('adminDescripcionDetallada').value,
         contenido: contenidoLimpio,
-        tags: document.getElementById('adminTitulo').value.toLowerCase().split(' '),
+
+        // Especificaciones
+        duracion: document.getElementById('adminDuracion').value,
+        modalidad: document.getElementById('adminModalidad').value,
+        perfilEgresado: document.getElementById('adminPerfilEgresado').value,
+        requisitos: document.getElementById('adminRequisitos').value,
         
-        // Campos por defecto (solo se incluyen en el ADD, no se tocan en el UPDATE)
-        descripcionDetallada: "Descripción detallada del programa. Edite esto para más información.",
-        duracion: "A Definir",
-        modalidad: "A Definir",
-        perfilEgresado: "Egresado listo para el mercado laboral.",
-        requisitos: "Sin requisitos.",
+        // Tags
+        tags: tagsFinales
     };
     
     if (!datosGuardar.titulo) {
@@ -493,11 +528,11 @@ async function guardarCambiosEdicion() {
 
     try {
         if (id) {
-            // Modo EDICIÓN (UPDATE): Solo enviamos los campos que queremos actualizar
+            // Modo EDICIÓN (UPDATE)
             await db.collection('programas').doc(id).update(datosGuardar);
             alert(`✅ Edición Exitosa: Programa "${datosGuardar.titulo}" actualizado.`);
         } else {
-            // Modo CREACIÓN (ADD): Enviamos todos los datos (incluyendo los por defecto)
+            // Modo CREACIÓN (ADD)
             await db.collection('programas').add(datosGuardar);
             alert(`✅ ¡Carga Exitosa! Programa "${datosGuardar.titulo}" creado en Firebase.`);
         }

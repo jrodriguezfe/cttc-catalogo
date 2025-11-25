@@ -14,8 +14,8 @@
     <header class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="#" onclick="showSection('catalogo')">
-                <img src="images/logo-cttc.png" alt="Logo CTTC-SENATI" style="height: 40px; margin-right: 10px;">
-                <span class="fs-6">Catálogo Dinámico</span>
+                <img src="images/logo-cttc.jpg" alt="Logo CTTC-SENATI" style="height: 40px; margin-right: 10px;">
+                
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -152,23 +152,24 @@
         </section>
 
         <section id="admin-form" class="spa-section" style="display:none;">
-            <a href="#" onclick="showSection('admin-dashboard')" class="text-decoration-none d-block mb-3">
-                <i class="bi bi-arrow-left"></i> Volver al Dashboard
+         <a href="#" onclick="showSection('admin-dashboard')" class="text-decoration-none d-block mb-3">
+             <i class="bi bi-arrow-left"></i> Volver al Dashboard
             </a>
             <h2 class="mb-4 display-5" id="adminFormTitle">Gestión de Programa <span class="text-acento"></span></h2>
             <p class="lead">Usa esta interfaz para crear nuevos programas o cargar uno existente para su edición.</p>
-            
+    
             <div class="card p-4 shadow-sm">
-                <form id="adminForm">
+            <form id="adminForm">
+                 <h4 class="mb-3 text-acento">Datos Básicos</h4>
                     <div class="mb-3">
-                        <label for="adminTitulo" class="form-label">Título del Programa</label>
+                     <label for="adminTitulo" class="form-label">Título del Programa</label>
                         <input type="text" class="form-control" id="adminTitulo" required>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="adminCategoria" class="form-label">Categoría</label>
                             <select class="form-select" id="adminCategoria" required>
-                                <option value="Diseño">Diseño</option>
+                             <option value="Diseño">Diseño</option>
                                 <option value="Confección">Confección</option>
                                 <option value="Tejido">Tejido</option>
                             </select>
@@ -181,22 +182,52 @@
                             </select>
                         </div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label for="adminImagenUrl" class="form-label">URL de Imagen Representativa</label>
                         <input type="url" class="form-control" id="adminImagenUrl" required>
                     </div>
+
+                    <h4 class="mb-3 text-acento">Descripción y Contenido</h4>
                     <div class="mb-3">
-                        <label for="adminDescripcion" class="form-label">Descripción Corta</label>
+                        <label for="adminDescripcion" class="form-label">Descripción Corta (Para la tarjeta)</label>
                         <textarea class="form-control" id="adminDescripcion" rows="2" required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="adminContenido" class="form-label">Contenido/Temario (Separar por nuevas líneas)</label>
-                        <textarea class="form-control" id="adminContenido" rows="4" required></textarea>
+                     <label for="adminDescripcionDetallada" class="form-label">Descripción Detallada (Para el modal)</label>
+                     <textarea class="form-control" id="adminDescripcionDetallada" rows="3"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="adminContenido" class="form-label">Contenido/Temario (Separar cada punto por una nueva línea)</label>
+                        <textarea class="form-control" id="adminContenido" rows="5" required></textarea>
+                    </div>
+
+                    <h4 class="mb-3 text-acento">Especificaciones y Requisitos</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="adminDuracion" class="form-label">Duración (Ej: 40 horas)</label>
+                            <input type="text" class="form-control" id="adminDuracion">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                         <label for="adminModalidad" class="form-label">Modalidad (Ej: Virtual / Presencial)</label>
+                            <input type="text" class="form-control" id="adminModalidad">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="adminPerfilEgresado" class="form-label">Perfil del Egresado</label>
+                <textarea class="form-control" id="adminPerfilEgresado" rows="2"></textarea>
+                 </div>
+                    <div class="mb-3">
+                        <label for="adminRequisitos" class="form-label">Requisitos del Curso</label>
+                        <textarea class="form-control" id="adminRequisitos" rows="2"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="adminTags" class="form-label">Tags/Palabras Clave (Separadas por coma o espacio)</label>
+                        <input type="text" class="form-control" id="adminTags" placeholder="Ej: patronaje, costura, digital">
                     </div>
 
                     <button type="button" class="btn btn-acento w-100 mt-3" onclick="guardarCambiosEdicion()">Guardar Programa</button>
                     <small class="form-text text-muted mt-2">
-                        El mismo botón se usa para crear o actualizar según el modo de edición.
+                     El mismo botón se usa para crear o actualizar según el modo de edición.
                     </small>
                 </form>
             </div>
