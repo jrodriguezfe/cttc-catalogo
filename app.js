@@ -54,13 +54,12 @@ async function cargarProgramas() {
     const container = document.getElementById('programas-container');
     const containerAdminList = document.getElementById('admin-list-container');
     
-    // Muestra spinner en ambas áreas (catálogo público y lista admin)
+    // Muestra spinner en ambas áreas
     const spinnerHtml = `<div class="col-12 text-center p-5"><div class="spinner-border text-acento" role="status"></div><p>Cargando programas...</p></div>`;
     container.innerHTML = spinnerHtml;
     if (containerAdminList) containerAdminList.innerHTML = spinnerHtml;
 
     try {
-        // Se asume que 'db' está inicializado globalmente en index.html
         const snapshot = await db.collection('programas').get();
         
         programas = snapshot.docs.map(doc => ({
@@ -112,7 +111,6 @@ async function loginAdmin() {
     authMessage.style.display = 'none';
 
     try {
-        // Se asume que 'auth' está inicializado globalmente en index.html
         await auth.signInWithEmailAndPassword(email, password);
     } catch (error) {
         console.error("Error de inicio de sesión:", error.message);
@@ -150,7 +148,6 @@ function showSection(sectionId, clearForm = false) {
     if (['admin-dashboard', 'admin-form'].includes(sectionId) && !userIsAdmin) {
         document.getElementById('login').style.display = 'block';
         document.getElementById('login').classList.add('active');
-        alert("🔒 Acceso denegado: Por favor, inicie sesión como administrador.");
         return; 
     }
 
@@ -319,7 +316,6 @@ function mostrarDetalle(id) {
     document.getElementById('detalleModalLabel').textContent = programa.titulo;
     const contenidoModal = document.getElementById('detalle-contenido');
     
-    // Procesa el contenido para la lista del modal
     const contenidoArray = programa.contenido && Array.isArray(programa.contenido) ? programa.contenido : (programa.contenido ? programa.contenido.split('\n') : []);
     const temarioList = contenidoArray.map(item => `<li class="list-group-item"><i class="bi bi-check-circle-fill text-acento me-2"></i>${item.trim()}</li>`).join('');
 
@@ -380,7 +376,7 @@ function mostrarDetalle(id) {
 }
 
 // ---------------------------------------------------
-// --- 7. FUNCIONES CRUD DE ADMINISTRACIÓN ---
+// --- 6. FUNCIONES CRUD DE ADMINISTRACIÓN ---
 // ---------------------------------------------------
 
 /**
