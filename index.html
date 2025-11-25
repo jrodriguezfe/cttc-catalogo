@@ -14,9 +14,10 @@
     <header class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="#" onclick="showSection('catalogo')">
-                <span class="text-acento fs-4 me-2">CTTC-SENATI</span>
+                <img src="images/logo-cttc.png" alt="Logo CTTC-SENATI" style="height: 40px; margin-right: 10px;">
                 <span class="fs-6">Catálogo Dinámico</span>
             </a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -29,7 +30,7 @@
                         <a class="nav-link" href="#" onclick="showSection('contacto')">Contacto</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-acento" href="#" onclick="showSection('admin')">Admin (Simulado)</a>
+                        <a class="nav-link text-acento" href="#" onclick="showSection('admin')">Admin (Gestión)</a>
                     </li>
                 </ul>
             </div>
@@ -57,7 +58,7 @@
             <hr>
 
             <div id="programas-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                </div>
+            </div>
         </section>
 
         <div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
@@ -70,11 +71,8 @@
                     <div class="modal-body">
                         <div id="detalle-contenido"></div>
                     </div>
-                    <div class="modal-footer justify-content-start">
-                        <a href="#" class="btn btn-lg btn-acento" onclick="alert('Simulación: Redirigiendo a formulario de inscripción o solicitando contacto.')">
-                            Inscríbete / Solicita Información
-                        </a>
-                    </div>
+                    <div class="modal-footer justify-content-start" id="detalle-footer">
+                        </div>
                 </div>
             </div>
         </div>
@@ -114,11 +112,11 @@
         </section>
 
         <section id="admin" class="spa-section" style="display:none;">
-            <h2 class="mb-4 display-5">Admin <span class="text-acento">(Simulación de Carga Ágil)</span></h2>
-            <p class="lead">Prototipo de interfaz para la rápida carga de un nuevo programa al catálogo. La lógica de guardado no está implementada (frontend estático).</p>
+            <h2 class="mb-4 display-5">Admin <span class="text-acento">(Gestión de Programas)</span></h2>
+            <p class="lead">Usa esta interfaz para crear nuevos programas o cargar uno existente para su edición.</p>
             
             <div class="card p-4 shadow-sm">
-                <h4 class="mb-4">Nuevo Programa de Capacitación</h4>
+                <h4 class="mb-4">Gestión de Programa</h4>
                 <form id="adminForm">
                     <div class="mb-3">
                         <label for="adminTitulo" class="form-label">Título del Programa</label>
@@ -154,9 +152,9 @@
                         <textarea class="form-control" id="adminContenido" rows="4" required></textarea>
                     </div>
 
-                    <button type="button" class="btn btn-acento w-100 mt-3" onclick="simularCargaAdmin()">Simular Carga de Programa</button>
+                    <button type="button" class="btn btn-acento w-100 mt-3" onclick="guardarCambiosEdicion()">Guardar Programa</button>
                     <small class="form-text text-muted mt-2">
-                        UX: La carga ágil permite ingresar los campos clave. En un sistema real, esto iría a una base de datos.
+                        UX: La función de este botón se alterna entre 'Crear Nuevo' y 'Guardar Cambios'.
                     </small>
                 </form>
             </div>
@@ -168,40 +166,28 @@
         <i class="bi bi-whatsapp"></i>
     </a>
 
-
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ⚠️ TUS CREDENCIALES DE FIREBASE (Son públicas y seguras con las reglas adecuadas)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCgMZOmU7FCZTRA44rBKeT8f6B_jYAf4_A",
+            authDomain: "cttc-senati-catalogo.firebaseapp.com",
+            projectId: "cttc-senati-catalogo",
+            storageBucket: "cttc-senati-catalogo.firebasestorage.app",
+            messagingSenderId: "385604859292",
+            appId: "1:385604859292:web:aca4b0ca7e77561cdec459"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+
     <script src="app.js"></script>
+
 </body>
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-
-<script>
-    // ⚠️ REEMPLAZA ESTE OBJETO con las credenciales que obtuviste en el Paso 1.3
-    const firebaseConfig = {
-        apiKey: "AIzaSyCgMZOmU7FCZTRA44rBKeT8f6B_jYAf4_A",
-        authDomain: "cttc-senati-catalogo.firebaseapp.com",
-        projectId: "cttc-senati-catalogo",
-        storageBucket: "cttc-senati-catalogo.firebasestorage.app",
-        messagingSenderId: "385604859292",
-        appId: "1:385604859292:web:aca4b0ca7e77561cdec459"
-    };
-
-    // Inicializar Firebase
-    firebase.initializeApp(firebaseConfig);
-
-    // Obtener una referencia a Firestore
-    const db = firebase.firestore();
-</script>
-
-<script src="app.js"></script>
-</body>
-</html>
-
-
-
 </html>

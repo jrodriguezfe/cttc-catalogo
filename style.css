@@ -1,20 +1,26 @@
-/* style.css */
+/* style.css - Mejoras en UX y Profesionalismo */
 
-/* Paleta de Colores */
+/* Paleta de Colores y Variables Base */
 :root {
-    --color-principal: #000000; /* Negro */
-    --color-acento: #A3E062; /* Verde Lima/Claro */
-    --color-fondo: #f8f9fa; /* Gris Claro para el fondo de la página */
-    --color-texto-secundario: #6c757d;
+    --color-principal: #000000;      /* Negro */
+    --color-acento: #A3E062;         /* Verde Lima */
+    --color-acento-hover: #7BB244;   /* Verde Oscuro para hover */
+    --color-fondo: #f8f9fa;          /* Fondo de la página */
+    --color-card-fondo: #ffffff;     /* Fondo de las tarjetas */
+    --color-sombra-suave: rgba(0, 0, 0, 0.05);
+    --color-sombra-acento: rgba(163, 224, 98, 0.4);
 }
 
+/* ---------------------------------------------------
+ * 1. BASE Y TIPOGRAFÍA (Profesional y Legible)
+ * --------------------------------------------------- */
 body {
     background-color: var(--color-fondo);
     color: var(--color-principal);
-    font-family: 'Inter', sans-serif; /* Asumiendo una fuente moderna */
+    font-family: 'Inter', sans-serif; 
+    line-height: 1.6; /* Mejora la legibilidad del texto largo */
 }
 
-/* Encabezados y Títulos */
 h1, h2, h3, h4, h5, h6 {
     color: var(--color-principal);
     font-weight: 700;
@@ -24,9 +30,14 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--color-acento) !important;
 }
 
-.bg-acento {
-    background-color: var(--color-acento) !important;
-    color: var(--color-principal) !important; /* Texto negro sobre el acento */
+/* ---------------------------------------------------
+ * 2. COMPONENTES INTERACTIVOS (Intuitivo y Claro)
+ * --------------------------------------------------- */
+
+/* Input y Select (Foco Claro) */
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-acento);
+    box-shadow: 0 0 0 0.25rem var(--color-sombra-acento); /* Sombra clara de acento */
 }
 
 /* Botones de Acento */
@@ -35,57 +46,89 @@ h1, h2, h3, h4, h5, h6 {
     border-color: var(--color-acento);
     color: var(--color-principal) !important;
     font-weight: 600;
-    transition: background-color 0.3s, border-color 0.3s;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.1s;
 }
 
 .btn-acento:hover {
-    background-color: #7BB244; /* Tono más oscuro al pasar el mouse */
-    border-color: #7BB244;
+    background-color: var(--color-acento-hover); 
+    border-color: var(--color-acento-hover);
     color: var(--color-principal) !important;
+    transform: translateY(-1px); /* Efecto sutil para mejor UX */
 }
 
-/* Tarjetas de Programa (Cards) */
+/* Botones Outline para Edición/Detalle */
+.btn-outline-dark, .btn-outline-secondary, .btn-outline-danger {
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+}
+.btn-outline-dark:hover {
+    background-color: var(--color-principal);
+    color: var(--color-fondo) !important;
+}
+
+/* ---------------------------------------------------
+ * 3. TARJETAS DE PROGRAMA (UX y Profesionalismo)
+ * --------------------------------------------------- */
 .card-programa {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid #dee2e6;
-    background-color: #ffffff;
+    background-color: var(--color-card-fondo);
+    border-radius: 8px; /* Bordes ligeramente redondeados */
+    overflow: hidden; /* Asegura que la imagen respete el borde */
 }
 
 .card-programa:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    transform: translateY(-8px); /* Efecto de elevación más notable */
+    box-shadow: 0 15px 30px var(--color-sombra-suave); /* Sombra más profunda */
+    cursor: pointer; /* Indica que es interactiva */
 }
 
 .card-img-top {
     height: 180px;
     object-fit: cover;
+    transition: transform 0.5s ease;
 }
 
-/* Botón Flotante de WhatsApp */
+.card-programa:hover .card-img-top {
+    transform: scale(1.05); /* Zoom sutil en la imagen al pasar el mouse */
+}
+
+/* Badge de Categoría */
+.badge.bg-acento {
+    font-size: 0.8em;
+    padding: 0.4em 0.8em;
+    border-radius: 12px;
+}
+
+/* ---------------------------------------------------
+ * 4. WHATSAPP FLOTANTE
+ * --------------------------------------------------- */
 .whatsapp-float {
     position: fixed;
-    width: 60px;
-    height: 60px;
-    bottom: 40px;
-    right: 40px;
+    width: 55px; /* Ligeramente más pequeño */
+    height: 55px;
+    bottom: 30px;
+    right: 30px;
     background-color: #25d366;
     color: #FFF;
-    border-radius: 50px;
+    border-radius: 50%; /* Cambiado a 50% para asegurar círculo */
     text-align: center;
-    font-size: 30px;
-    box-shadow: 2px 2px 3px #999;
+    font-size: 28px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Sombra más moderna */
     z-index: 1000;
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background-color 0.3s, transform 0.3s;
 }
 
 .whatsapp-float:hover {
     background-color: #128c7e;
+    transform: scale(1.1); /* Efecto de crecimiento sutil */
 }
 
-/* Formulario de Contacto y Admin */
-.form-control:focus {
-    border-color: var(--color-acento);
-    box-shadow: 0 0 0 0.25rem rgba(163, 224, 98, 0.25); /* Sombra suave con el color acento */
+/* ---------------------------------------------------
+ * 5. SECCIÓN DE ADMIN (Clarity)
+ * --------------------------------------------------- */
+.spa-section {
+    min-height: 70vh; /* Asegura que la sección no se colapse al cambiar */
 }

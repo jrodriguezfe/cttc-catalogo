@@ -1,74 +1,61 @@
 // app.js
 
-//programas = [];
+// ⚠️ Variable GLOBAL para almacenar el catálogo.
+// NO USAR 'let' o 'const' aquí si la inicializaste en el <script> de index.html
+// Si NO la inicializaste en index.html, usa:
+let programas = []; 
 
-// --- 1. LÓGICA DE CARGA DE DATOS (al inicio) ---
+// ---------------------------------------------------
+// --- 1. LÓGICA DE CARGA DE DATOS (INICIALIZACIÓN) ---
+// ---------------------------------------------------
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1.1 Carga de datos del JSON
+    // 1.1 Carga inicial del catálogo desde Firestore
     cargarProgramas();
 
     // 1.2 Inicializa Tooltips de Bootstrap (para WhatsApp)
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 });
 
-/**
- * Carga los datos de programas.json y renderiza el catálogo inicial.
- */
-async function cargarProgramas() {
-    // app.js
-
-    // Nota: db ya está inicializado en la sección <script> de index.html
-
-    let programas = []; // Mantenemos la variable global para el filtrado
-
-    document.addEventListener('DOMContentLoaded', () => {
-    // La inicialización de Firebase ya ocurre en index.html
-    cargarProgramas();
-    // ... (Inicializa Tooltips)
-})};
-
 
 /**
- * Carga los programas directamente desde Firestore.
+ * Carga los programas directamente desde Firestore y actualiza la variable global 'programas'.
  */
 async function cargarProgramas() {
     const container = document.getElementById('programas-container');
     container.innerHTML = `<div class="col-12 text-center p-5"><div class="spinner-border text-acento" role="status"></div><p>Cargando programas...</p></div>`;
 
     try {
-        // Obtenemos todos los documentos de la colección 'programas'
+        // Se asume que 'db' está inicializado globalmente en index.html
         const snapshot = await db.collection('programas').get();
         
+        // 🚨 CORRECCIÓN: Llenamos la variable global 'programas' (sin 'let')
         programas = snapshot.docs.map(doc => ({
-            id: doc.id, // Usamos el ID de Firestore como ID único
+            id: doc.id, // ID de Firestore (string)
             ...doc.data()
         }));
 
         renderizarProgramas(programas);
     } catch (error) {
-        console.error("Error al cargar programas desde Firebase:", error);
+        console.error("❌ Error al cargar programas desde Firebase:", error);
         container.innerHTML = `
             <div class="col-12 alert alert-danger" role="alert">
                 <h4 class="alert-heading">Error de Conexión a Base de Datos</h4>
-                <p>No se pudieron cargar los programas. Verifique su conexión a internet y las credenciales de Firebase.</p>
+                <p>Verifique su conexión a internet, credenciales de Firebase, y reglas de seguridad de Firestore (deben permitir la lectura).</p>
             </div>
         `;
     }
 }
 
-    // *** El resto de funciones (crearCardPrograma, renderizarProgramas, filtrarProgramas, mostrarDetalle) permanece IGUAL,
-    //     ya que trabajan con la variable global 'programas' que acabamos de llenar. ***
-
-// --- 2. LÓGICA DE RENDERIZADO DEL CATÁLOGO ---
+// ---------------------------------------------------
+// --- 2. LÓGICA DE RENDERIZADO Y TARJETAS ---
+// ---------------------------------------------------
 
 /**
  * Genera la tarjeta HTML para un programa específico.
- * @param {object} programa - Objeto con los datos del programa.
- * @returns {string} - HTML de la tarjeta.
  */
 function crearCardPrograma(programa) {
     return `
@@ -98,7 +85,6 @@ function crearCardPrograma(programa) {
 
 /**
  * Renderiza el conjunto de programas en el contenedor.
- * @param {Array<object>} listaProgramas - La lista de programas a mostrar.
  */
 function renderizarProgramas(listaProgramas) {
     const container = document.getElementById('programas-container');
@@ -118,7 +104,9 @@ function renderizarProgramas(listaProgramas) {
     });
 }
 
+// ---------------------------------------------------
 // --- 3. FUNCIONALIDAD DE FILTRADO Y BÚSQUEDA ---
+// ---------------------------------------------------
 
 /**
  * Filtra los programas basándose en la barra de búsqueda y el selector de categoría.
@@ -129,11 +117,12 @@ function filtrarProgramas() {
 
     const programasFiltrados = programas.filter(programa => {
         // 1. Filtrar por texto (título, descripción o tags)
+        const tags = programa.tags && Array.isArray(programa.tags) ? programa.tags : [];
         const coincideBusqueda = 
             programa.titulo.toLowerCase().includes(textoBusqueda) ||
             programa.descripcionCorta.toLowerCase().includes(textoBusqueda) ||
-            programa.descripcionDetallada.toLowerCase().includes(textoBusqueda) ||
-            programa.tags.some(tag => tag.toLowerCase().includes(textoBusqueda));
+            (programa.descripcionDetallada ? programa.descripcionDetallada.toLowerCase().includes(textoBusqueda) : false) ||
+            tags.some(tag => tag.toLowerCase().includes(textoBusqueda));
 
         // 2. Filtrar por categoría
         const coincideCategoria = 
@@ -145,27 +134,31 @@ function filtrarProgramas() {
     renderizarProgramas(programasFiltrados);
 }
 
-
+// ---------------------------------------------------
 // --- 4. LÓGICA DEL DETALLE (MODAL) ---
+// ---------------------------------------------------
 
 /**
  * Muestra el modal con la información detallada del programa.
- * @param {number} id - El ID del programa.
  */
 function mostrarDetalle(id) {
     console.log("Intentando mostrar detalle para ID:", id);
+    // 🚨 CORRECCIÓN: El operador '===' funciona bien ya que el ID de Firebase es STRING.
     const programa = programas.find(p => p.id === id);
 
     if (!programa){
         console.error("Programa no encontrado con ID:", id);
-        return;}
+        return;
+    }
 
-    // Actualizar el contenido del Modal
+    // --- 1. INYECCIÓN DEL CONTENIDO PRINCIPAL ---
+    
     document.getElementById('detalleModalLabel').textContent = programa.titulo;
     const contenidoModal = document.getElementById('detalle-contenido');
     
-    // Lista de contenido/temario
-    const temarioList = programa.contenido.map(item => `<li class="list-group-item"><i class="bi bi-check-circle-fill text-acento me-2"></i>${item}</li>`).join('');
+    // Si 'contenido' no es un array o es undefined, usamos un array vacío para evitar errores
+    const contenidoArray = programa.contenido && Array.isArray(programa.contenido) ? programa.contenido : [];
+    const temarioList = contenidoArray.map(item => `<li class="list-group-item"><i class="bi bi-check-circle-fill text-acento me-2"></i>${item}</li>`).join('');
 
     contenidoModal.innerHTML = `
         <div class="row mb-4">
@@ -174,36 +167,57 @@ function mostrarDetalle(id) {
             </div>
             <div class="col-md-6">
                 <p class="lead fw-bold">${programa.descripcionCorta}</p>
-                <p>${programa.descripcionDetallada}</p>
+                <p>${programa.descripcionDetallada || 'No hay descripción detallada.'}</p>
                 <div class="mb-2">
-                    <span class="badge bg-dark me-2"><i class="bi bi-clock"></i> ${programa.duracion}</span>
-                    <span class="badge bg-dark"><i class="bi bi-geo-alt"></i> ${programa.modalidad}</span>
+                    <span class="badge bg-dark me-2"><i class="bi bi-clock"></i> ${programa.duracion || 'N/A'}</span>
+                    <span class="badge bg-dark"><i class="bi bi-geo-alt"></i> ${programa.modalidad || 'N/A'}</span>
                 </div>
             </div>
         </div>
         
         <h4 class="text-acento mt-3">Contenido y Temario</h4>
         <ul class="list-group list-group-flush mb-4">
-            ${temarioList}
+            ${temarioList.length > 0 ? temarioList : '<li class="list-group-item">Contenido no especificado.</li>'}
         </ul>
         
         <h4 class="text-acento">Perfil del Egresado</h4>
-        <p>${programa.perfilEgresado}</p>
+        <p>${programa.perfilEgresado || 'N/A'}</p>
 
         <h4 class="text-acento">Requisitos</h4>
-        <p>${programa.requisitos}</p>
+        <p>${programa.requisitos || 'N/A'}</p>
+    `;
+    
+    // --- 2. INYECCIÓN DEL FOOTER Y BOTONES (Edit y Delete) ---
+    
+    document.getElementById('detalle-footer').innerHTML = `
+        <a href="#" class="btn btn-lg btn-acento" onclick="alert('Simulación: Solicitud de inscripción para ${programa.titulo}')">
+            Inscríbete / Solicita Información
+        </a>
+        <button class="btn btn-outline-secondary me-2" onclick="cargarFormularioEdicion('${programa.id}')">
+            <i class="bi bi-pencil"></i> Editar (Admin)
+        </button>
+        <button class="btn btn-outline-danger" onclick="eliminarPrograma('${programa.id}')">
+            <i class="bi bi-trash"></i> Eliminar (Admin)
+        </button>
     `;
 
-    // Mostrar el modal
-    const detalleModal = new bootstrap.Modal(document.getElementById('detalleModal'));
+    // --- 3. APERTURA FINAL DEL MODAL ---
+    
+    const detalleModalElement = document.getElementById('detalleModal');
+    let detalleModal = bootstrap.Modal.getInstance(detalleModalElement);
+    if (!detalleModal) {
+        detalleModal = new bootstrap.Modal(detalleModalElement);
+    }
+    
     detalleModal.show();
 }
 
+// ---------------------------------------------------
 // --- 5. LÓGICA DE LA SPA (Mostrar/Ocultar Secciones) ---
+// ---------------------------------------------------
 
 /**
  * Maneja el cambio entre las secciones de la SPA.
- * @param {string} sectionId - ID de la sección a mostrar ('catalogo', 'contacto', 'admin').
  */
 function showSection(sectionId) {
     document.querySelectorAll('.spa-section').forEach(section => {
@@ -215,65 +229,133 @@ function showSection(sectionId) {
     if (targetSection) {
         targetSection.style.display = 'block';
         targetSection.classList.add('active');
-        // Asegurarse de que el catálogo se refresque si volvemos a él
         if (sectionId === 'catalogo') {
             filtrarProgramas();
         }
     }
 }
 
-// --- 6. SIMULACIÓN DE CÁRGA ADMIN ---
+// ---------------------------------------------------
+// --- 6. FUNCIONES DE ADMINISTRACIÓN (CRUD) ---
+// ---------------------------------------------------
 
 /**
- * Simula el proceso de guardar un nuevo programa desde la interfaz de administración.
+ * Elimina un documento (programa) de la colección de Firestore.
+ * 🚨 CORRECCIÓN: Solo mantenemos una definición de esta función.
  */
-async function simularCargaAdmin() {
-    const titulo = document.getElementById('adminTitulo').value;
-    const categoria = document.getElementById('adminCategoria').value;
-    const estado = document.getElementById('adminEstado').value;
-    const descripcion = document.getElementById('adminDescripcion').value;
-    const imagenUrl = document.getElementById('adminImagenUrl').value;
-    const contenidoTexto = document.getElementById('adminContenido').value;
-
-    if (!titulo || estado === 'Inactivo') {
-        alert('Simulación FALLIDA:\nEl programa debe tener un Título y estar Activo para la carga.');
+async function eliminarPrograma(id) {
+    if (!confirm("¿Está seguro de que desea ELIMINAR este programa de forma permanente?")) {
         return;
     }
 
     try {
-        // Crear el objeto del nuevo programa
-        const nuevoPrograma = {
-            titulo,
-            categoria,
-            estado,
-            descripcionCorta: descripcion,
-            descripcionDetallada: "Descripción detallada por defecto...", // Puedes expandir esto
-            imagenUrl: imagenUrl || "https://picsum.photos/400/250?random=10",
-            duracion: "A definir",
-            modalidad: "A definir",
-            tags: titulo.toLowerCase().split(' '),
-            contenido: contenidoTexto.split(/[\n,-]/).map(s => s.trim()).filter(s => s.length > 0), // Convierte texto plano a array
-            perfilEgresado: "Egresado listo para el mercado laboral.",
-            requisitos: "Sin requisitos."
-        };
+        await db.collection('programas').doc(id).delete();
+        
+        alert(`✅ Programa con ID: ${id} eliminado correctamente.`);
 
-        // Guardar el nuevo programa en la colección 'programas'
-        await db.collection('programas').add(nuevoPrograma);
+        cargarProgramas();
 
-        alert(`
-            ✅ ¡Carga Exitosa! (Guardado en Firebase)
-            
-            Programa: "${titulo}"
-            Estado: ${estado}
-        `);
+        const detalleModal = bootstrap.Modal.getInstance(document.getElementById('detalleModal'));
+        if (detalleModal) {
+            detalleModal.hide();
+        }
 
-        // Recargar el catálogo después de añadir el nuevo programa
-        document.getElementById('adminForm').reset();
-        cargarProgramas(); // Refresca el listado para ver el nuevo item
-        showSection('catalogo'); // Vuelve al catálogo
+    } catch (error) {
+        console.error("❌ Error al eliminar el programa:", error);
+        alert(`Error al eliminar: ${error.message}`);
+    }
+}
+
+/**
+ * Carga los datos de un programa existente en el formulario de administración para su edición.
+ */
+function cargarFormularioEdicion(id) {
+    showSection('admin'); 
+
+    const programa = programas.find(p => p.id === id);
+    if (!programa) {
+        alert("Programa no encontrado para edición.");
+        return;
+    }
+
+    // 1. Configurar la interfaz para Edición
+    document.querySelector('#admin h2').innerHTML = `Editar Programa <span class="text-acento">${programa.titulo}</span>`;
+    document.getElementById('adminForm').setAttribute('data-programa-id', id);
+
+    // 2. Llenar los campos del formulario
+    document.getElementById('adminTitulo').value = programa.titulo;
+    document.getElementById('adminCategoria').value = programa.categoria;
+    document.getElementById('adminEstado').value = programa.estado || 'Activo';
+    document.getElementById('adminImagenUrl').value = programa.imagenUrl;
+    document.getElementById('adminDescripcion').value = programa.descripcionCorta;
+    
+    // Manejar contenido (temario) si existe, uniéndolo con saltos de línea
+    const contenidoTexto = programa.contenido && Array.isArray(programa.contenido) ? programa.contenido.join('\n') : '';
+    document.getElementById('adminContenido').value = contenidoTexto;
+
+    // 3. Configurar el botón de acción
+    document.querySelector('#adminForm button').textContent = "Guardar Cambios";
+    document.querySelector('#adminForm button').setAttribute('onclick', 'guardarCambiosEdicion()');
+}
+
+/**
+ * Guarda el nuevo programa (si no hay ID) o actualiza el existente (si hay ID).
+ * 🚨 REFACTORIZACIÓN: Esta función ahora maneja AMBOS casos: Creación (add) y Edición (update).
+ */
+async function guardarCambiosEdicion() {
+    const form = document.getElementById('adminForm');
+    const id = form.getAttribute('data-programa-id');
+
+    // Recoger datos del formulario
+    const datosGuardar = {
+        titulo: document.getElementById('adminTitulo').value,
+        categoria: document.getElementById('adminCategoria').value,
+        estado: document.getElementById('adminEstado').value,
+        descripcionCorta: document.getElementById('adminDescripcion').value,
+        imagenUrl: document.getElementById('adminImagenUrl').value,
+        
+        // Procesar temario y tags
+        contenido: document.getElementById('adminContenido').value.split(/[\n,-]/).map(s => s.trim()).filter(s => s.length > 0),
+        tags: document.getElementById('adminTitulo').value.toLowerCase().split(' '),
+    };
+    
+    if (!datosGuardar.titulo || datosGuardar.estado === 'Inactivo') {
+        alert('Fallo de Validación:\nEl programa debe tener un Título y estar Activo.');
+        return;
+    }
+
+    try {
+        if (id) {
+            // Modo EDICIÓN: Usamos update()
+            await db.collection('programas').doc(id).update(datosGuardar);
+            alert(`✅ Edición Exitosa: Programa "${datosGuardar.titulo}" actualizado.`);
+        } else {
+            // Modo CREACIÓN (usando la misma lógica que simularCargaAdmin original)
+            await db.collection('programas').add({
+                ...datosGuardar,
+                // Campos adicionales necesarios para creación
+                descripcionDetallada: "Descripción detallada por defecto...",
+                duracion: "A definir",
+                modalidad: "A definir",
+                perfilEgresado: "Egresado listo para el mercado laboral.",
+                requisitos: "Sin requisitos."
+            });
+            alert(`✅ ¡Carga Exitosa! (Guardado en Firebase)`);
+        }
+
+        // Limpiar el estado y recargar la UI
+        form.reset();
+        form.removeAttribute('data-programa-id');
+        cargarProgramas(); 
+        showSection('catalogo');
+        
+        // Restaurar el botón para futuras creaciones (volver al modo "Simular Carga")
+        document.querySelector('#admin h2').innerHTML = 'Admin <span class="text-acento">(Simulación de Carga Ágil)</span>';
+        document.querySelector('#adminForm button').textContent = "Simular Carga de Programa";
+        document.querySelector('#adminForm button').setAttribute('onclick', 'guardarCambiosEdicion()'); // Mantiene la función unificada
         
     } catch (error) {
-        console.error("Error al guardar programa en Firebase:", error);
-        alert(`❌ Error al guardar: ${error.message}`);
+        console.error("❌ Error al guardar/actualizar programa:", error);
+        alert(`Error al guardar: ${error.message}`);
     }
 }
