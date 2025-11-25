@@ -59,4 +59,25 @@
     "perfilEgresado": "Profesional con la base técnica para supervisar o asistir en plantas de tejido y acabado de punto.",
     "requisitos": "Interés en procesos textiles. No se requiere experiencia previa."
   }
+
+  {
+    "id": 4,
+    "titulo": "Tecnología de Tejidos de Punto y sus Acabados",
+    "descripcionCorta": "Explora los principios de la maquinaria y los procesos de acabado que determinan la calidad y el tacto del tejido de punto.",
+    "descripcionDetallada": "Estudio profundo sobre tipos de máquinas de tejer circulares, parámetros de control, defectos comunes y procesos de acabados húmedos y secos (tintorería, ramado, cepillado).",
+    "imagenUrl": "images/imagen3.jpg",
+    "duracion": "32 horas",
+    "modalidad": "Virtual Asincrónica",
+    "categoria": "Tejido",
+    "tags": ["tejido", "maquinaria", "acabados", "punto", "tintoreria"],
+    "contenido": [
+      "Estructuras de Tejido de Punto",
+      "Operación y Mantenimiento de Máquinas",
+      "Control de Calidad del Tejido Crudo",
+      "Procesos de Tintorería y Blanqueo",
+      "Termofijación y Estabilización"
+    ],
+    "perfilEgresado": "Profesional con la base técnica para supervisar o asistir en plantas de tejido y acabado de punto.",
+    "requisitos": "Interés en procesos textiles. No se requiere experiencia previa."
+  }
 ]
