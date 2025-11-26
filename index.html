@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo CTTC-SENATI | Programas de Capacitación</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="style.css"> </head>
+    <link rel="stylesheet" href="style.css"> 
+</head>
 <body>
 
     <header class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top">
@@ -59,9 +60,11 @@
 
             <hr>
 
-            <div class="row">
+            <div class="gallery-container-wrapper">
+                <button class="gallery-nav-btn left" onclick="scrollGallery(-1)"><i class="bi bi-chevron-left"></i></button>
                 <div id="programas-container" class="horizontal-gallery">
                     </div>
+                <button class="gallery-nav-btn right" onclick="scrollGallery(1)"><i class="bi bi-chevron-right"></i></button>
             </div>
         </section>
 
@@ -240,6 +243,14 @@
     <a href="https://wa.me/51999999999" class="whatsapp-float" target="_blank" data-bs-toggle="tooltip" data-bs-placement="left" title="Contáctanos por WhatsApp">
         <i class="bi bi-whatsapp"></i>
     </a>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2024 CTTC SENATI. Todos los derechos reservados.</p>
+            <p>Diseñado y desarrollado para programas de capacitación.</p>
+        </div>
+    </footer>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>

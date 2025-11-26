@@ -1,29 +1,33 @@
-/* style.css - Código Final y Consolidado */
+/* style.css - CÓDIGO FINAL CON ESTILOS DE ARRASTRE, NAVEGACIÓN Y NUEVA PALETA (Negro y Verde Claro) */
 
 /* Paleta de Colores y Variables Base */
 :root {
-    --color-principal: #000000;       /* Negro */
-    --color-acento: #A3E062;          /* Verde Lima */
-    --color-acento-hover: #7BB244;    /* Verde Oscuro para hover */
-    --color-fondo: #f8f9fa;           /* Fondo de la página */
-    --color-card-fondo: #ffffff;      /* Fondo de las tarjetas */
-    --color-sombra-suave: rgba(0, 0, 0, 0.05);
-    --color-sombra-acento: rgba(163, 224, 98, 0.4);
+    --color-principal: #1a1a1a; /* Negro profundo para texto y elementos principales */
+    --color-acento: #a0d9b4;   /* Verde claro vibrante */
+    --color-claro: #f0f2f5;    /* Gris muy claro para fondos */
+    --color-sombra: rgba(0, 0, 0, 0.25); /* Sombra más oscura */
+    --color-sombra-suave: rgba(0, 0, 0, 0.1); /* Sombra suave */
+    --color-texto-claro: #ffffff; /* Texto blanco para fondos oscuros */
 }
 
 /* ---------------------------------------------------
  * 1. BASE Y TIPOGRAFÍA
  * --------------------------------------------------- */
 body {
-    background-color: var(--color-fondo);
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--color-claro);
     color: var(--color-principal);
-    font-family: 'Inter', sans-serif; 
     line-height: 1.6;
 }
 
 h1, h2, h3, h4, h5, h6 {
     color: var(--color-principal);
     font-weight: 700;
+}
+
+.display-5 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .text-acento {
@@ -34,116 +38,217 @@ h1, h2, h3, h4, h5, h6 {
  * 2. COMPONENTES INTERACTIVOS
  * --------------------------------------------------- */
 
+/* Navbar personalizado */
+.navbar {
+    background-color: var(--color-principal) !important; /* Fondo negro */
+    box-shadow: 0 2px 5px var(--color-sombra);
+}
+.navbar-brand {
+    font-weight: 900;
+    color: var(--color-texto-claro) !important; /* Texto blanco */
+    display: flex;
+    align-items: center;
+}
+.navbar-brand img {
+    filter: invert(1); /* Invertir colores del logo si es oscuro para que se vea en fondo negro */
+    height: 40px;
+    margin-right: 10px;
+}
+.nav-link {
+    color: var(--color-texto-claro) !important; /* Texto blanco */
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.nav-link:hover {
+    color: var(--color-acento) !important; /* Verde claro en hover */
+}
+.btn-dark { /* Botón de Admin */
+    background-color: var(--color-acento); /* Verde claro */
+    border-color: var(--color-acento);
+    color: var(--color-principal) !important; /* Texto negro */
+    transition: all 0.2s;
+}
+.btn-dark:hover {
+    background-color: darken(var(--color-acento), 10%) !important; /* Un verde un poco más oscuro */
+    border-color: darken(var(--color-acento), 10%) !important;
+    color: var(--color-principal) !important;
+}
+
+
 .form-control:focus, .form-select:focus {
     border-color: var(--color-acento);
-    box-shadow: 0 0 0 0.25rem var(--color-sombra-acento);
+    box-shadow: 0 0 0 0.25rem rgba(160, 217, 180, 0.5); /* Sombra del verde claro */
 }
 
 .btn-acento {
     background-color: var(--color-acento);
     border-color: var(--color-acento);
-    color: var(--color-principal) !important;
+    color: var(--color-principal) !important; /* Texto negro */
     font-weight: 600;
     transition: background-color 0.3s, border-color 0.3s, transform 0.1s;
 }
 
 .btn-acento:hover {
-    background-color: var(--color-acento-hover); 
-    border-color: var(--color-acento-hover);
+    background-color: darken(var(--color-acento), 10%) !important; /* Un verde un poco más oscuro */
+    border-color: darken(var(--color-acento), 10%) !important;
     color: var(--color-principal) !important;
     transform: translateY(-1px);
 }
 
-.btn-outline-dark, .btn-outline-secondary, .btn-outline-danger {
-    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+.btn-outline-dark {
+    color: var(--color-principal) !important;
+    border-color: var(--color-principal) !important;
+    transition: all 0.2s;
 }
 .btn-outline-dark:hover {
-    background-color: var(--color-principal);
-    color: var(--color-fondo) !important;
+    background-color: var(--color-principal) !important;
+    color: var(--color-texto-claro) !important; /* Texto blanco */
 }
 
 /* ---------------------------------------------------
  * 3. TARJETAS DE PROGRAMA
  * --------------------------------------------------- */
+.card-wrapper {
+    flex: 0 0 90%;
+}
+
+@media (min-width: 576px) {
+    .card-wrapper {
+        flex: 0 0 50%;
+    }
+}
+@media (min-width: 992px) {
+    .card-wrapper {
+        flex: 0 0 300px;
+        max-width: 300px;
+    }
+}
+
 .card-programa {
+    border: none;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid #dee2e6;
-    background-color: var(--color-card-fondo);
-    border-radius: 8px;
-    overflow: hidden;
-    height: 100%;
-    min-width: 250px;
+    border-radius: 12px;
+    background-color: white; /* Las tarjetas se mantienen blancas para contraste */
+    box-shadow: 0 4px 10px var(--color-sombra-suave);
+    cursor: grab;
 }
 
 .card-programa:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 30px var(--color-sombra-suave);
-    cursor: pointer; /* Cursor de puntero para indicar interactividad */
+    box-shadow: 0 15px 30px var(--color-sombra);
 }
 
 .card-img-top {
     height: 180px;
     object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.card-programa:hover .card-img-top {
-    transform: scale(1.05);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
 }
 
 .badge.bg-acento {
-    font-size: 0.8em;
-    padding: 0.4em 0.8em;
-    border-radius: 12px;
+    background-color: var(--color-acento) !important;
+    font-weight: 600;
+    color: var(--color-principal) !important; /* Texto negro en el badge */
 }
 
+/* Estilos para el modal de detalle */
+.modal-content {
+    border-radius: 12px;
+}
+.modal-header {
+    border-bottom: none;
+    background-color: var(--color-principal); /* Fondo del header del modal negro */
+    color: var(--color-texto-claro);
+}
+.modal-header .btn-close {
+    filter: invert(1); /* Invertir el color del botón cerrar para que sea visible */
+}
+.modal-title {
+    color: var(--color-texto-claro) !important;
+}
+.modal-body {
+    background-color: var(--color-claro);
+    color: var(--color-principal);
+}
+.modal-footer {
+    border-top: none;
+    background-color: var(--color-claro);
+}
+.modal-body h4 { /* Títulos dentro del modal */
+    color: var(--color-principal);
+}
+
+
 /* ---------------------------------------------------
- * 4. WHATSAPP FLOTANTE
+ * 4. WHATSAPP FLOTANTE y FOOTER
  * --------------------------------------------------- */
 .whatsapp-float {
     position: fixed;
-    width: 55px; 
-    height: 55px;
-    bottom: 30px;
-    right: 30px;
-    background-color: #25d366;
+    width: 60px;
+    height: 60px;
+    bottom: 40px;
+    right: 40px;
+    background-color: #25d366; /* Verde WhatsApp */
     color: #FFF;
-    border-radius: 50%; 
+    border-radius: 50px;
     text-align: center;
-    font-size: 28px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
+    font-size: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     z-index: 1000;
     display: flex;
-    justify-content: center;
     align-items: center;
-    transition: background-color 0.3s, transform 0.3s;
+    justify-content: center;
+    transition: transform 0.2s;
 }
 
 .whatsapp-float:hover {
-    background-color: #128c7e;
-    transform: scale(1.1); 
+    color: white;
+    transform: scale(1.1);
+}
+
+.site-footer {
+    background-color: var(--color-principal); /* Fondo negro */
+    color: var(--color-texto-claro); /* Texto blanco */
+    padding: 2rem 0;
+    text-align: center;
+    margin-top: 5rem;
+}
+.site-footer a {
+    color: var(--color-acento); /* Verde claro */
+    text-decoration: none;
 }
 
 /* ---------------------------------------------------
- * 5. GALERÍA HORIZONTAL (Scroll Nativo y Responsividad)
+ * 5. GALERÍA HORIZONTAL (Arrastre y Navegación)
  * --------------------------------------------------- */
+
+.gallery-container-wrapper {
+    position: relative; 
+    margin-bottom: 2rem;
+}
 
 .horizontal-gallery {
     display: flex;
     flex-wrap: nowrap;
-    overflow-x: auto; /* Permite el scroll horizontal */
+    overflow-x: scroll;
     padding: 1rem 0;
-    margin-left: 0; 
-    margin-right: 0;
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
     
     scroll-behavior: smooth; 
-    user-select: auto; /* Permite la selección normal de texto (sin arrastre) */
+    
+    cursor: grab;
+    user-select: none; 
     
     -webkit-overflow-scrolling: touch; 
-    scroll-snap-type: x mandatory; 
+    scroll-snap-type: x mandatory;
 }
 
-/* Ocultar barra de desplazamiento para un look más limpio */
+.horizontal-gallery.active {
+    cursor: grabbing; 
+}
+
+/* Ocultar barra de desplazamiento */
 .horizontal-gallery::-webkit-scrollbar {
     display: none; 
 }
@@ -152,43 +257,53 @@ h1, h2, h3, h4, h5, h6 {
     scrollbar-width: none;
 }
 
-/* Estilo y espaciado de las tarjetas dentro de la galería */
-.horizontal-gallery > .card-wrapper {
-    flex-shrink: 0; 
-    margin-right: 15px; 
-    scroll-snap-align: start; 
-    padding-left: 0.75rem; 
+/* Botones de navegación */
+.gallery-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--color-principal); /* Fondo negro */
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--color-texto-claro); /* Texto blanco */
+    box-shadow: 0 2px 10px var(--color-sombra);
+    z-index: 10;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.gallery-nav-btn:hover {
+    background-color: var(--color-acento); /* Verde claro en hover */
+    transform: translateY(-50%) scale(1.1);
+    color: var(--color-principal); /* Texto negro en hover */
+}
+.gallery-nav-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(160, 217, 180, 0.5); 
 }
 
-/* ---------------------------------------------------
- * 6. MEDIA QUERIES (Responsiveness)
- * --------------------------------------------------- */
+.gallery-nav-btn.left {
+    left: 10px;
+}
+.gallery-nav-btn.right {
+    right: 10px;
+}
 
-/* Móvil (MAX 1 curso visible a la vez) */
+/* Ocultar botones en móviles pequeños */
 @media (max-width: 767px) {
-    .horizontal-gallery > .card-wrapper {
-        width: 85vw; /* Muestra 1 tarjeta y el indicio de la siguiente */
+    .gallery-nav-btn {
+        display: none;
     }
 }
 
-/* Tablet / Pantallas Medianas (Transición a 2 cursos visibles) */
-@media (min-width: 768px) {
-    .horizontal-gallery > .card-wrapper {
-        width: calc(50% - 15px); 
-        max-width: 350px;
-    }
-}
-
-/* Desktop / Pantallas Grandes (3 cursos visibles en la fila) */
-@media (min-width: 992px) {
-    .horizontal-gallery > .card-wrapper {
-        width: calc(33.33% - 15px); 
-        max-width: 400px;
-    }
-}
 
 /* ---------------------------------------------------
- * 7. UTILITY
+ * 6. UTILITY
  * --------------------------------------------------- */
 .spa-section {
     min-height: 70vh; 

@@ -1,12 +1,17 @@
-// app.js - Lógica de la SPA, Firebase, CRUD y Galería SIN Arrastre
+// app.js - CÓDIGO FINAL CON LÓGICA DE ARRASTRE, CORRECCIÓN DE TIPOS Y NAVEGACIÓN CON FLECHAS
 
 let currentEditId = null;
 let allProgramas = []; 
 
+// Variables para la lógica de arrastre
+let isDragging = false;
+let startPos = 0;
+let scrollLeft = 0;
+let dragThreshold = 5; 
+
 // =================================================================
 // 1. MANEJO DE VISTAS (SPA)
 // =================================================================
-
 function showSection(sectionId, isNew = false) {
     document.querySelectorAll('.spa-section').forEach(section => {
         section.style.display = 'none';
@@ -31,7 +36,6 @@ function showSection(sectionId, isNew = false) {
 // =================================================================
 // 2. LÓGICA DE AUTENTICACIÓN (ADMIN)
 // =================================================================
-
 function handleAdminAuth() {
     if (auth.currentUser) {
         showSection('admin-dashboard');
@@ -84,15 +88,38 @@ function logoutAdmin() {
 // =================================================================
 
 /**
- * Genera la tarjeta HTML para un programa específico.
- * El onclick de la tarjeta llama directamente a mostrarDetalle.
+ * Función para desplazar la galería usando los botones de flecha.
  */
+function scrollGallery(direction) {
+    const gallery = document.getElementById('programas-container');
+    if (!gallery) return;
+
+    // Calcula el ancho de una tarjeta más el margen (aprox. 315px para desktop)
+    const scrollAmount = gallery.querySelector('.card-wrapper') 
+        ? gallery.querySelector('.card-wrapper').offsetWidth 
+        : 315; 
+    
+    // Desplaza el scroll en la dirección indicada
+    gallery.scrollLeft += direction * scrollAmount;
+}
+
+
+/**
+ * Maneja el clic en una tarjeta, evitando que se dispare si fue un arrastre.
+ */
+function handleCardClick(event, id) {
+    if (Math.abs(startPos - event.clientX) < dragThreshold) {
+        mostrarDetalle(id);
+    }
+}
+
+
 function crearCardPrograma(programa) {
     if (programa.estado !== 'Activo') return '';
 
     return `
         <div class="card-wrapper"> 
-            <div class="card h-100 card-programa shadow-sm" onclick="mostrarDetalle('${programa.id}')" role="button">
+            <div class="card h-100 card-programa shadow-sm" onclick="handleCardClick(event, '${programa.id}')" role="button">
                 <img src="${programa.imagenUrl}" class="card-img-top" alt="Imagen representativa de ${programa.titulo}" loading="lazy" onerror="this.onerror=null;this.src='https://via.placeholder.com/180x180?text=No+Image'">
                 <div class="card-body d-flex flex-column">
                     <span class="badge bg-acento mb-2 align-self-start">${programa.categoria}</span>
@@ -163,21 +190,23 @@ function filtrarProgramas() {
     container.innerHTML = programasFiltrados.map(crearCardPrograma).join('');
 }
 
+
 function mostrarDetalle(id) {
     db.collection('programas').doc(id).get()
         .then(doc => {
-            // ⚠️ DEBUG: AÑADE ESTO
-            console.log('Documento de Firebase recibido:', doc.exists);
             if (doc.exists) {
                 const programa = { id: doc.id, ...doc.data() };
-                console.log('Datos del Programa:', programa); // ⚠️ DEBUG: AÑADE ESTO
                 const modalTitle = document.getElementById('detalleModalLabel');
                 const modalBody = document.getElementById('detalle-contenido');
                 const modalFooter = document.getElementById('detalle-footer');
                 
                 modalTitle.textContent = programa.titulo;
 
-                const contenidoLista = programa.contenido ? programa.contenido.split('\n').map(item => `<li>${item.trim()}</li>`).join('') : '';
+                const contenidoRaw = String(programa.contenido || '').trim();
+                const contenidoLista = contenidoRaw.split('\n')
+                    .filter(item => item !== '')
+                    .map(item => `<li>${item.trim()}</li>`)
+                    .join('');
 
                 modalBody.innerHTML = `
                     <div class="row">
@@ -228,19 +257,18 @@ function mostrarDetalle(id) {
                 const detalleModal = new bootstrap.Modal(document.getElementById('detalleModal'));
                 detalleModal.show();
             } else {
-                console.error("DEBUG: El ID del programa no existe en Firestore:", id);
                 alert('Programa no encontrado.');
             }
         })
         .catch(error => {
-            // ⚠️ DEBUG: AÑADE ESTO
-            console.error("ERROR CRÍTICO: Fallo al obtener datos de Firebase:", error);
+            console.error("Error al obtener detalle:", error);
+            alert('Error al obtener datos del programa. Revisa la consola para más detalles.');
         });
 }
 
 
 // =================================================================
-// 4. LÓGICA DE ADMINISTRACIÓN (CRUD)
+// 4. LÓGICA DE ADMINISTRACIÓN (CRUD) (SIN CAMBIOS)
 // =================================================================
 
 function loadAdminList() {
@@ -345,7 +373,7 @@ function guardarCambiosEdicion() {
         imagenUrl: document.getElementById('adminImagenUrl').value,
         descripcionCorta: document.getElementById('adminDescripcion').value,
         descripcionDetallada: document.getElementById('adminDescripcionDetallada').value,
-        contenido: document.getElementById('adminContenido').value,
+        contenido: String(document.getElementById('adminContenido').value || ''),
         duracion: document.getElementById('adminDuracion').value,
         modalidad: document.getElementById('adminModalidad').value,
         perfilEgresado: document.getElementById('adminPerfilEgresado').value,
@@ -385,11 +413,64 @@ function eliminarPrograma(id) {
     }
 }
 
+
 // =================================================================
-// 5. INICIALIZACIÓN
+// 5. LÓGICA DE ARRASTRE DE GALERÍA Y NAVEGACIÓN (RESTORED)
+// =================================================================
+
+function initGalleryDrag() {
+    const gallery = document.getElementById('programas-container');
+    if (!gallery) return; 
+
+    gallery.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        gallery.classList.add('active'); 
+        startPos = e.clientX;
+        scrollLeft = gallery.scrollLeft;
+        e.preventDefault(); 
+    });
+
+    gallery.addEventListener('mouseleave', () => {
+        isDragging = false;
+        gallery.classList.remove('active');
+    });
+
+    gallery.addEventListener('mouseup', (e) => {
+        isDragging = false;
+        gallery.classList.remove('active');
+    });
+
+    gallery.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault(); 
+
+        const x = e.clientX - startPos; 
+        gallery.scrollLeft = scrollLeft - x;
+    });
+
+    // Manejo de eventos táctiles
+    gallery.addEventListener('touchstart', (e) => {
+        startPos = e.touches[0].clientX;
+        scrollLeft = gallery.scrollLeft;
+        isDragging = false;
+    });
+
+    gallery.addEventListener('touchmove', () => {
+        isDragging = false; 
+    });
+
+    gallery.addEventListener('touchend', () => {
+        isDragging = false;
+    });
+}
+
+
+// =================================================================
+// 6. INICIALIZACIÓN
 // =================================================================
 document.addEventListener('DOMContentLoaded', () => {
     cargarProgramas();
+    initGalleryDrag(); 
 
     // Inicializar tooltips de Bootstrap
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
