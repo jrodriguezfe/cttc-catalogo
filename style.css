@@ -34,13 +34,11 @@ h1, h2, h3, h4, h5, h6 {
  * 2. COMPONENTES INTERACTIVOS
  * --------------------------------------------------- */
 
-/* Input y Select (Foco Claro) */
 .form-control:focus, .form-select:focus {
     border-color: var(--color-acento);
     box-shadow: 0 0 0 0.25rem var(--color-sombra-acento);
 }
 
-/* Botones de Acento */
 .btn-acento {
     background-color: var(--color-acento);
     border-color: var(--color-acento);
@@ -56,7 +54,6 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateY(-1px);
 }
 
-/* Botones Outline para Edición/Detalle */
 .btn-outline-dark, .btn-outline-secondary, .btn-outline-danger {
     transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
 }
@@ -74,14 +71,14 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--color-card-fondo);
     border-radius: 8px;
     overflow: hidden;
-    height: 100%; /* Asegura uniformidad de altura en la galería */
-    min-width: 250px; /* Ancho mínimo para evitar que se aplasten */
+    height: 100%;
+    min-width: 250px;
 }
 
 .card-programa:hover {
     transform: translateY(-8px);
     box-shadow: 0 15px 30px var(--color-sombra-suave);
-    cursor: pointer;
+    cursor: pointer; /* Cursor de puntero para indicar interactividad */
 }
 
 .card-img-top {
@@ -94,7 +91,6 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1.05);
 }
 
-/* Badge de Categoría */
 .badge.bg-acento {
     font-size: 0.8em;
     padding: 0.4em 0.8em;
@@ -129,44 +125,37 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ---------------------------------------------------
- * 5. GALERÍA HORIZONTAL (Arraste y Responsividad)
+ * 5. GALERÍA HORIZONTAL (Scroll Nativo y Responsividad)
  * --------------------------------------------------- */
 
 .horizontal-gallery {
-    /* Propiedades para el scroll horizontal y el arrastre */
     display: flex;
     flex-wrap: nowrap;
-    overflow-x: auto;  
+    overflow-x: auto; /* Permite el scroll horizontal */
     padding: 1rem 0;
     margin-left: 0; 
     margin-right: 0;
     
     scroll-behavior: smooth; 
-    cursor: grab; /* Indica que se puede arrastrar (usado con JS para el mouse) */
-    user-select: none; /* Evita la selección de texto al arrastrar */
+    user-select: auto; /* Permite la selección normal de texto (sin arrastre) */
     
-    -webkit-overflow-scrolling: touch; /* Suaviza el scroll táctil */
-    scroll-snap-type: x mandatory; /* Detiene el scroll en cada tarjeta */
-}
-
-/* Estilo de arrastre activo (cursor cuando se presiona el mouse) */
-.horizontal-gallery.active {
-    cursor: grabbing; 
+    -webkit-overflow-scrolling: touch; 
+    scroll-snap-type: x mandatory; 
 }
 
 /* Ocultar barra de desplazamiento para un look más limpio */
 .horizontal-gallery::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none; 
 }
 .horizontal-gallery {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 /* Estilo y espaciado de las tarjetas dentro de la galería */
 .horizontal-gallery > .card-wrapper {
-    flex-shrink: 0; /* Evita que las tarjetas se encojan */
-    margin-right: 15px; /* Espaciado entre tarjetas */
+    flex-shrink: 0; 
+    margin-right: 15px; 
     scroll-snap-align: start; 
     padding-left: 0.75rem; 
 }
@@ -178,15 +167,13 @@ h1, h2, h3, h4, h5, h6 {
 /* Móvil (MAX 1 curso visible a la vez) */
 @media (max-width: 767px) {
     .horizontal-gallery > .card-wrapper {
-        /* Muestra 1 tarjeta completa y el indicio de la siguiente (85vw) */
-        width: 85vw; 
+        width: 85vw; /* Muestra 1 tarjeta y el indicio de la siguiente */
     }
 }
 
 /* Tablet / Pantallas Medianas (Transición a 2 cursos visibles) */
 @media (min-width: 768px) {
     .horizontal-gallery > .card-wrapper {
-        /* Permite mostrar 2 tarjetas y el espacio entre ellas */
         width: calc(50% - 15px); 
         max-width: 350px;
     }
@@ -195,7 +182,6 @@ h1, h2, h3, h4, h5, h6 {
 /* Desktop / Pantallas Grandes (3 cursos visibles en la fila) */
 @media (min-width: 992px) {
     .horizontal-gallery > .card-wrapper {
-        /* Permite mostrar 3 tarjetas y el espacio entre ellas */
         width: calc(33.33% - 15px); 
         max-width: 400px;
     }
