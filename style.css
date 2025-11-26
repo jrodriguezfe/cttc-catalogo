@@ -2,23 +2,23 @@
 
 /* Paleta de Colores y Variables Base */
 :root {
-    --color-principal: #000000;      /* Negro */
-    --color-acento: #A3E062;         /* Verde Lima */
-    --color-acento-hover: #7BB244;   /* Verde Oscuro para hover */
-    --color-fondo: #f8f9fa;          /* Fondo de la página */
-    --color-card-fondo: #ffffff;     /* Fondo de las tarjetas */
+    --color-principal: #000000;       /* Negro */
+    --color-acento: #A3E062;          /* Verde Lima */
+    --color-acento-hover: #7BB244;    /* Verde Oscuro para hover */
+    --color-fondo: #f8f9fa;           /* Fondo de la página */
+    --color-card-fondo: #ffffff;      /* Fondo de las tarjetas */
     --color-sombra-suave: rgba(0, 0, 0, 0.05);
     --color-sombra-acento: rgba(163, 224, 98, 0.4);
 }
 
 /* ---------------------------------------------------
- * 1. BASE Y TIPOGRAFÍA (Profesional y Legible)
+ * 1. BASE Y TIPOGRAFÍA
  * --------------------------------------------------- */
 body {
     background-color: var(--color-fondo);
     color: var(--color-principal);
     font-family: 'Inter', sans-serif; 
-    line-height: 1.6; /* Mejora la legibilidad del texto largo */
+    line-height: 1.6;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -31,13 +31,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ---------------------------------------------------
- * 2. COMPONENTES INTERACTIVOS (Intuitivo y Claro)
+ * 2. COMPONENTES INTERACTIVOS
  * --------------------------------------------------- */
 
 /* Input y Select (Foco Claro) */
 .form-control:focus, .form-select:focus {
     border-color: var(--color-acento);
-    box-shadow: 0 0 0 0.25rem var(--color-sombra-acento); /* Sombra clara de acento */
+    box-shadow: 0 0 0 0.25rem var(--color-sombra-acento);
 }
 
 /* Botones de Acento */
@@ -53,7 +53,7 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--color-acento-hover); 
     border-color: var(--color-acento-hover);
     color: var(--color-principal) !important;
-    transform: translateY(-1px); /* Efecto sutil para mejor UX */
+    transform: translateY(-1px);
 }
 
 /* Botones Outline para Edición/Detalle */
@@ -66,20 +66,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ---------------------------------------------------
- * 3. TARJETAS DE PROGRAMA (UX y Profesionalismo)
+ * 3. TARJETAS DE PROGRAMA
  * --------------------------------------------------- */
 .card-programa {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid #dee2e6;
     background-color: var(--color-card-fondo);
-    border-radius: 8px; /* Bordes ligeramente redondeados */
-    overflow: hidden; /* Asegura que la imagen respete el borde */
+    border-radius: 8px;
+    overflow: hidden;
+    height: 100%; /* Asegura uniformidad de altura en la galería */
+    min-width: 250px; /* Ancho mínimo para evitar que se aplasten */
 }
 
 .card-programa:hover {
-    transform: translateY(-8px); /* Efecto de elevación más notable */
-    box-shadow: 0 15px 30px var(--color-sombra-suave); /* Sombra más profunda */
-    cursor: pointer; /* Indica que es interactiva */
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px var(--color-sombra-suave);
+    cursor: pointer;
 }
 
 .card-img-top {
@@ -89,7 +91,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card-programa:hover .card-img-top {
-    transform: scale(1.05); /* Zoom sutil en la imagen al pasar el mouse */
+    transform: scale(1.05);
 }
 
 /* Badge de Categoría */
@@ -127,17 +129,29 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ---------------------------------------------------
- * 5. GALERÍA HORIZONTAL (Ajuste para 1/3 tarjetas)
+ * 5. GALERÍA HORIZONTAL (Arraste y Responsividad)
  * --------------------------------------------------- */
+
 .horizontal-gallery {
+    /* Propiedades para el scroll horizontal y el arrastre */
     display: flex;
-    flex-wrap: nowrap; /* Impide que los elementos se envuelvan */
-    overflow-x: auto;  /* Permite el desplazamiento horizontal */
+    flex-wrap: nowrap;
+    overflow-x: auto;  
     padding: 1rem 0;
     margin-left: 0; 
     margin-right: 0;
-    -webkit-overflow-scrolling: touch; /* Suaviza el scroll en iOS */
-    scroll-snap-type: x mandatory; /* Ayuda a que el scroll se detenga en cada tarjeta */
+    
+    scroll-behavior: smooth; 
+    cursor: grab; /* Indica que se puede arrastrar (usado con JS para el mouse) */
+    user-select: none; /* Evita la selección de texto al arrastrar */
+    
+    -webkit-overflow-scrolling: touch; /* Suaviza el scroll táctil */
+    scroll-snap-type: x mandatory; /* Detiene el scroll en cada tarjeta */
+}
+
+/* Estilo de arrastre activo (cursor cuando se presiona el mouse) */
+.horizontal-gallery.active {
+    cursor: grabbing; 
 }
 
 /* Ocultar barra de desplazamiento para un look más limpio */
@@ -145,52 +159,50 @@ h1, h2, h3, h4, h5, h6 {
     display: none; /* Chrome, Safari, Opera */
 }
 .horizontal-gallery {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 }
 
 /* Estilo y espaciado de las tarjetas dentro de la galería */
-.horizontal-gallery > .col {
-    /* Usamos flex-shrink: 0 para que la tarjeta mantenga su ancho */
-    flex-shrink: 0; 
-    margin-right: 20px; /* Espaciado fijo entre tarjetas */
+.horizontal-gallery > .card-wrapper {
+    flex-shrink: 0; /* Evita que las tarjetas se encojan */
+    margin-right: 15px; /* Espaciado entre tarjetas */
     scroll-snap-align: start; 
-    padding-right: 0; /* No debe tener padding derecho */
-    padding-left: 1rem; /* Padding lateral */
+    padding-left: 0.75rem; 
 }
 
 /* ---------------------------------------------------
- * BREAKPOINTS (Anchos específicos por dispositivo)
+ * 6. MEDIA QUERIES (Responsiveness)
  * --------------------------------------------------- */
 
-/* Móvil (MÁXIMO 1 curso visible: ~85vw) */
-/* (max-width: 767px) */
-.horizontal-gallery > .col {
-    width: 85vw; /* 85% del ancho del viewport, cumpliendo el requisito de 1 por vista */
+/* Móvil (MAX 1 curso visible a la vez) */
+@media (max-width: 767px) {
+    .horizontal-gallery > .card-wrapper {
+        /* Muestra 1 tarjeta completa y el indicio de la siguiente (85vw) */
+        width: 85vw; 
+    }
 }
 
-/* Tablet / Pantallas Medianas (Transición a ~2 cursos visibles) */
+/* Tablet / Pantallas Medianas (Transición a 2 cursos visibles) */
 @media (min-width: 768px) {
-    .horizontal-gallery > .col {
-        width: 45vw; /* Muestra 2 cursos y un indicio del tercero */
+    .horizontal-gallery > .card-wrapper {
+        /* Permite mostrar 2 tarjetas y el espacio entre ellas */
+        width: calc(50% - 15px); 
+        max-width: 350px;
     }
 }
 
-/* Desktop / Pantallas Grandes (MÁXIMO 3 cursos visibles) */
+/* Desktop / Pantallas Grandes (3 cursos visibles en la fila) */
 @media (min-width: 992px) {
-    .horizontal-gallery > .col {
-        /* Forzamos el ancho a ser 35vw. 3 tarjetas = 105vw, garantizando el scroll */
-        width: 35vw; 
-    }
-    
-    /* Ajuste para la primera tarjeta en desktop */
-    .horizontal-gallery > .col:first-child {
-        padding-left: 0.75rem; /* Ajuste fino con el padding original de Bootstrap */
+    .horizontal-gallery > .card-wrapper {
+        /* Permite mostrar 3 tarjetas y el espacio entre ellas */
+        width: calc(33.33% - 15px); 
+        max-width: 400px;
     }
 }
 
 /* ---------------------------------------------------
- * 6. UTILITY
+ * 7. UTILITY
  * --------------------------------------------------- */
 .spa-section {
     min-height: 70vh; 
