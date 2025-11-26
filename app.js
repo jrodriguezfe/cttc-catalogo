@@ -234,7 +234,7 @@ function mostrarDetalle(id) {
                 `;
 
                 let footerHtml = `
-                    <a href="https://wa.me/51999999999?text=Hola,%20estoy%20interesado%20en%20el%20programa:%20${encodeURIComponent(programa.titulo)}" target="_blank" class="btn btn-lg btn-acento">
+                    <a href="https://wa.me/51954622231?text=Hola,%20estoy%20interesado%20en%20el%20programa:%20${encodeURIComponent(programa.titulo)}" target="_blank" class="btn btn-lg btn-acento">
                         <i class="bi bi-whatsapp me-2"></i>Inscribirse por WhatsApp
                     </a>
                 `;

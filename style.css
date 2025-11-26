@@ -1,12 +1,12 @@
-/* style.css - CÓDIGO FINAL CON ESTILOS DE ARRASTRE, NAVEGACIÓN Y NUEVA PALETA (Negro y Verde Claro) */
+/* style.css - CÓDIGO FINAL CON FONDOS EN NEGRO PURO (#000000) */
 
 /* Paleta de Colores y Variables Base */
 :root {
-    --color-principal: #1a1a1a; /* Negro profundo para texto y elementos principales */
+    --color-principal: #000000;   /* NEGRO PURO (Fondo del logo y encabezado) */
     --color-acento: #a0d9b4;   /* Verde claro vibrante */
-    --color-claro: #f0f2f5;    /* Gris muy claro para fondos */
-    --color-sombra: rgba(0, 0, 0, 0.25); /* Sombra más oscura */
-    --color-sombra-suave: rgba(0, 0, 0, 0.1); /* Sombra suave */
+    --color-claro: #f0f2f5;    /* Gris muy claro para fondos de contenido */
+    --color-sombra: rgba(0, 0, 0, 0.25); 
+    --color-sombra-suave: rgba(0, 0, 0, 0.1);
     --color-texto-claro: #ffffff; /* Texto blanco para fondos oscuros */
 }
 
@@ -40,18 +40,19 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Navbar personalizado */
 .navbar {
-    background-color: var(--color-principal) !important; /* Fondo negro */
+    /* El fondo del encabezado coincide exactamente con el color principal/fondo del logo */
+    background-color: var(--color-principal) !important; 
     box-shadow: 0 2px 5px var(--color-sombra);
 }
 .navbar-brand {
     font-weight: 900;
-    color: var(--color-texto-claro) !important; /* Texto blanco */
+    color: var(--color-texto-claro) !important;
     display: flex;
     align-items: center;
 }
 .navbar-brand img {
-    filter: invert(1); /* Invertir colores del logo si es oscuro para que se vea en fondo negro */
-    height: 40px;
+    /* El logo mantiene su color y forma originales */
+    height: 150px;
     margin-right: 10px;
 }
 .nav-link {
@@ -63,14 +64,14 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--color-acento) !important; /* Verde claro en hover */
 }
 .btn-dark { /* Botón de Admin */
-    background-color: var(--color-acento); /* Verde claro */
+    background-color: var(--color-acento);
     border-color: var(--color-acento);
     color: var(--color-principal) !important; /* Texto negro */
     transition: all 0.2s;
 }
 .btn-dark:hover {
-    background-color: darken(var(--color-acento), 10%) !important; /* Un verde un poco más oscuro */
-    border-color: darken(var(--color-acento), 10%) !important;
+    background-color: #7ab38e !important; 
+    border-color: #7ab38e !important;
     color: var(--color-principal) !important;
 }
 
@@ -89,8 +90,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-acento:hover {
-    background-color: darken(var(--color-acento), 10%) !important; /* Un verde un poco más oscuro */
-    border-color: darken(var(--color-acento), 10%) !important;
+    background-color: #7ab38e !important; 
+    border-color: #7ab38e !important;
     color: var(--color-principal) !important;
     transform: translateY(-1px);
 }
@@ -157,11 +158,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 .modal-header {
     border-bottom: none;
-    background-color: var(--color-principal); /* Fondo del header del modal negro */
+    background-color: var(--color-principal); /* Fondo del header del modal negro puro */
     color: var(--color-texto-claro);
 }
 .modal-header .btn-close {
-    filter: invert(1); /* Invertir el color del botón cerrar para que sea visible */
+    filter: invert(1); 
 }
 .modal-title {
     color: var(--color-texto-claro) !important;
@@ -207,8 +208,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .site-footer {
-    background-color: var(--color-principal); /* Fondo negro */
-    color: var(--color-texto-claro); /* Texto blanco */
+    background-color: var(--color-principal); /* Fondo negro puro */
+    color: var(--color-texto-claro); 
     padding: 2rem 0;
     text-align: center;
     margin-top: 5rem;
@@ -262,7 +263,7 @@ h1, h2, h3, h4, h5, h6 {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background-color: var(--color-principal); /* Fondo negro */
+    background-color: var(--color-principal); /* Fondo negro puro */
     border: none;
     border-radius: 50%;
     width: 45px;
