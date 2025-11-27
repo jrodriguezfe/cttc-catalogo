@@ -1,4 +1,4 @@
-// app.js - MÓDULO PRINCIPAL FINAL
+// app.js - MÓDULO PRINCIPAL FINAL (Catálogo y Lógica de Carga)
 
 // =================================================================
 // 1. FUNCIONES PÚBLICAS ESENCIALES Y VARIABLES GLOBALES
@@ -13,7 +13,7 @@ const DRAG_THRESHOLD = 5;
 let adminModule = null; 
 let adminLoading = false; 
 
-// --- FUNCIONES DEL CATÁLOGO Y GALERÍA ---
+// --- FUNCIONES DEL CATÁLOGO Y GALERÍA (Restauradas) ---
 
 function cargarProgramas() {
     const container = document.getElementById('programas-container');
@@ -56,7 +56,7 @@ function crearCardPrograma(programa) {
 
     return `
         <div class="card-wrapper p-3">
-            <div class="card card-programa h-100 shadow-sm" data-id="${programa.id}">
+            <div class="card card-programa h-100 shadow-sm" onclick="mostrarDetalle('${programa.id}')" data-id="${programa.id}">
                 <img src="${programa.imagenUrl || 'images/default-placeholder.jpg'}" class="card-img-top" alt="Imagen de ${programa.titulo}">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title text-truncate">${programa.titulo}</h5>
@@ -65,11 +65,6 @@ function crearCardPrograma(programa) {
                         <span class="badge bg-acento me-2">${programa.categoria}</span>
                         ${programa.duracion ? `<span class="badge bg-secondary">${programa.duracion}</span>` : ''}
                     </div>
-                </div>
-                <div class="card-footer bg-white border-top-0 pt-2">
-                    <button class="btn btn-sm btn-outline-dark w-100" onclick="mostrarDetalle('${programa.id}')">
-                        <i class="bi bi-info-circle me-1"></i> Ver Más Detalles
-                    </button>
                 </div>
             </div>
         </div>
@@ -91,14 +86,14 @@ function mostrarDetalle(id) {
     const programa = allProgramas.find(p => p.id === id);
     if (!programa) return;
 
+    // ... (Lógica completa para llenar el modal de detalle) ...
     const modalTitle = document.getElementById('detalleModalLabel');
     const modalBody = document.getElementById('detalle-contenido');
     const modalFooter = document.getElementById('detalle-footer');
     
     modalTitle.textContent = programa.titulo;
 
-    // 🔑 FIX DE TYPERROR: Aseguramos que programa.contenido sea un String antes de llamar .split()
-    const contenidoLista = String(programa.contenido || '')
+    const contenidoLista = (programa.contenido || '')
         .split('\n')
         .map(item => item.trim())
         .filter(item => item.length > 0)
@@ -129,31 +124,13 @@ function mostrarDetalle(id) {
         </div>
     `;
 
-    // Botones del Footer
-    let footerHtml = `
+    modalFooter.innerHTML = `
         <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" onclick="showSection('contacto'); document.getElementById('programaInteres').value = '${programa.titulo}';" class="btn btn-acento" data-bs-dismiss="modal">
+        <a href="#contacto" onclick="showSection('contacto'); document.getElementById('programaInteres').value = '${programa.titulo}';" class="btn btn-acento" data-bs-dismiss="modal">
             Solicitar Información
-        </button>
+        </a>
     `;
 
-    // 🚀 AÑADIR BOTONES DE ADMIN SI EL USUARIO ESTÁ LOGUEADO
-    if (auth.currentUser) {
-        footerHtml = `
-            ${footerHtml}
-            <div class="ms-auto">
-                <button class="btn btn-outline-dark me-2" onclick="adminModule.cargarProgramaParaEdicion('${programa.id}')" data-bs-dismiss="modal">
-                    <i class="bi bi-pencil me-1"></i> Editar
-                </button>
-                <button class="btn btn-outline-danger" onclick="adminModule.eliminarPrograma('${programa.id}')" data-bs-dismiss="modal">
-                    <i class="bi bi-trash me-1"></i> Eliminar
-                </button>
-            </div>
-        `;
-    }
-
-    modalFooter.innerHTML = footerHtml;
-    
     const detalleModal = new bootstrap.Modal(document.getElementById('detalleModal'));
     detalleModal.show();
 }
@@ -175,7 +152,7 @@ function initGalleryDrag() {
         scrollLeft = gallery.scrollLeft;
         e.preventDefault(); 
     });
-    // ... (rest of mouse and touch events for drag/scroll)
+
     gallery.addEventListener('mouseleave', () => {
         isDragging = false;
         gallery.classList.remove('active');
@@ -216,7 +193,7 @@ function initGalleryDrag() {
 }
 
 // =================================================================
-// 3. MANEJO DE VISTAS (SPA)
+// 2. MANEJO DE VISTAS (SPA)
 // =================================================================
 function showSection(sectionId, isNew = false) {
     document.querySelectorAll('.spa-section').forEach(section => {
@@ -244,7 +221,7 @@ function showSection(sectionId, isNew = false) {
 
 
 // =================================================================
-// 4. LÓGICA DE CARGA DINÁMICA DE ADMIN Y WRAPPERS
+// 3. LÓGICA DE CARGA DINÁMICA DE ADMIN Y WRAPPERS
 // =================================================================
 
 // FUNCIÓN DE CALLBACK GLOBAL
@@ -299,7 +276,7 @@ auth.onAuthStateChanged(user => {
 
 
 // =================================================================
-// 5. INICIALIZACIÓN
+// 4. INICIALIZACIÓN
 // =================================================================
 document.addEventListener('DOMContentLoaded', () => {
     cargarProgramas();
